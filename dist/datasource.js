@@ -49,6 +49,8 @@ System.register(["lodash"], function (_export, _context) {
         _createClass(GenericDatasource, [{
           key: "query",
           value: function query(options) {
+            var _this = this;
+
             var query = this.buildQueryParameters(options);
             query.targets = query.targets.filter(function (t) {
               return !t.hide;
@@ -57,7 +59,7 @@ System.register(["lodash"], function (_export, _context) {
             if (query.targets.length <= 0) {
               return this.q.when({ data: [] });
             }
-
+            console.log(this);
             // Format data for table panel
             if (query.targets[0].type == "table") {
               return this.backendSrv.datasourceRequest({
@@ -73,9 +75,10 @@ System.register(["lodash"], function (_export, _context) {
                     "type": "table"
                   }]
                 };
-                response.data.data.forEach(function (item) {
-                  results.data[0].rows.push([Date.parse(item.startsAt), item.labels.instance + " (" + item.labels.rancher_host + ")", item.labels.alertname, parseInt(item.labels.severity)]);
-                });
+                for (var i = 0; i < response.data.data.length; i++) {
+                  var item = response.data.data[i];
+                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(item.labels), item.labels.alertname, parseInt(item.labels.severity)]);
+                };
                 return results;
               });
             } else {
@@ -108,7 +111,7 @@ System.register(["lodash"], function (_export, _context) {
         }, {
           key: "buildQueryParameters",
           value: function buildQueryParameters(options) {
-            var _this = this;
+            var _this2 = this;
 
             //remove placeholder targets
             options.targets = _.filter(options.targets, function (target) {
@@ -116,7 +119,7 @@ System.register(["lodash"], function (_export, _context) {
             });
             var targets = _.map(options.targets, function (target) {
               return {
-                target: _this.templateSrv.replace(target.target),
+                target: _this2.templateSrv.replace(target.target),
                 expr: target.expr,
                 refId: target.refId,
                 hide: target.hide,
@@ -125,6 +128,23 @@ System.register(["lodash"], function (_export, _context) {
             });
             options.targets = targets;
             return options;
+          }
+        }, {
+          key: "formatInstanceText",
+          value: function formatInstanceText(labels, url) {
+            var text = "";
+            if (typeof labels.certname != 'undefined') {
+              text += labels.certname;
+            } else if (typeof labels.rancher_host != 'undefined') {
+              text += labels.rancher_host;
+            }
+            if (typeof labels.instance != 'undefined') {
+              text += "[" + labels.instance + "]";
+            }
+            if (typeof labels.rancher_environment != 'undefined') {
+              text += " (" + labels.rancher_environment + ")";
+            }
+            return text;
           }
         }]);
 

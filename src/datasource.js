@@ -15,11 +15,10 @@ export class GenericDatasource {
     var query = this.buildQueryParameters(options);
     query.targets = query.targets.filter(t => !t.hide);
 
-
     if (query.targets.length <= 0) {
       return this.q.when({data: []});
     }
-
+    console.log(this);
     // Format data for table panel
     if(query.targets[0].type == "table"){
       return this.backendSrv.datasourceRequest({
@@ -42,14 +41,15 @@ export class GenericDatasource {
             }
           ]
         };
-        response.data.data.forEach(function(item){
+        for(var i=0;i<response.data.data.length;i++){
+          var item = response.data.data[i];
           results.data[0].rows.push([
             Date.parse(item.startsAt),
-            item.labels.instance+" ("+item.labels.rancher_host+")",
+            this.formatInstanceText(item.labels),
             item.labels.alertname,
             parseInt(item.labels.severity)
           ]);
-        });
+        };
         return results;
       });
     }else{
@@ -99,5 +99,21 @@ export class GenericDatasource {
     });
     options.targets = targets;
     return options;
+  }
+
+  formatInstanceText(labels, url){
+    var text = "";
+    if(typeof labels.certname != 'undefined'){
+      text += labels.certname;
+    }else if(typeof labels.rancher_host != 'undefined'){
+      text += labels.rancher_host;
+    }
+    if(typeof labels.instance != 'undefined'){
+      text += "["+labels.instance+"]";
+    }
+    if(typeof labels.rancher_environment != 'undefined'){
+      text += " ("+labels.rancher_environment+")";
+    }
+    return text;
   }
 }

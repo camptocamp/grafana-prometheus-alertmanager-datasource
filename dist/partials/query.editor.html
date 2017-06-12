@@ -1,0 +1,23 @@
+<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form-inline">
+    <div class="gf-form gf-form--grow" ng-if="ctrl.target.rawQuery">
+      <textarea class="gf-form-input" rows="5" ng-model="ctrl.target.target" spellcheck="false" ng-blur="ctrl.onChangeInternal()" />
+    </div>
+  </div>
+
+	<div class="gf-form-inline">
+		<div class="gf-form" ng-if="!ctrl.target.rawQuery">
+			<metric-segment-model property="ctrl.target.target" get-options="ctrl.getOptions($query)" on-change="ctrl.onChangeInternal()" css-class="tight-form-item-xxlarge">
+			</metric-segment-model>
+		</div>
+		<div class="gf-form">
+  			<input class="gf-form-input" ng-model="ctrl.target.expr" on-change="ctrl.onChangeInternal()" />
+		</div>
+		<div class="gf-form">
+			<div class="gf-form-label query-keyword">Format</div>
+			<div class="gf-form-select-wrapper">
+				<select class="gf-form-input" ng-model="ctrl.target.type" ng-options="f as f for f in ['single', 'timeserie', 'table']"></select>
+			</div>
+    </div>
+  </div>
+</query-editor-row>

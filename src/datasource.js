@@ -112,7 +112,7 @@ export class GenericDatasource {
       text += "["+labels.instance+"]";
     }
     if(typeof labels.rancher_environment != 'undefined'){
-      text += " ("+labels.rancher_environment+")";
+      text += " ("+labels.rancher_environment+", "+labels.rancher_url+")";
     }
     return text;
   }

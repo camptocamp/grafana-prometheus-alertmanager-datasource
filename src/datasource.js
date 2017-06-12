@@ -45,7 +45,7 @@ export class GenericDatasource {
         response.data.data.forEach(function(item){
           results.data[0].rows.push([
             Date.parse(item.startsAt),
-            "<a href='"+this.url+"/query?filter={instance=\""+item.labels.instance+"\"}'>"+item.labels.instance+" ("+item.labels.rancher_host+")</a>",
+            item.labels.instance+" ("+item.labels.rancher_host+")",
             item.labels.alertname,
             1
           ]);

@@ -47,7 +47,7 @@ export class GenericDatasource {
             Date.parse(item.startsAt),
             item.labels.instance+" ("+item.labels.rancher_host+")",
             item.labels.alertname,
-            1
+            parseInt(item.labels.severity)
           ]);
         });
         return results;

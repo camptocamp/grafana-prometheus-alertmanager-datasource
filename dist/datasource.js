@@ -74,7 +74,7 @@ System.register(["lodash"], function (_export, _context) {
                   }]
                 };
                 response.data.data.forEach(function (item) {
-                  results.data[0].rows.push([Date.parse(item.startsAt), item.labels.instance + " (" + item.labels.rancher_host + ")", item.labels.alertname, 1]);
+                  results.data[0].rows.push([Date.parse(item.startsAt), item.labels.instance + " (" + item.labels.rancher_host + ")", item.labels.alertname, parseInt(item.labels.severity)]);
                 });
                 return results;
               });

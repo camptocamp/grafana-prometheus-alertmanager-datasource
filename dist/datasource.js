@@ -133,6 +133,9 @@ System.register(["lodash"], function (_export, _context) {
         }, {
           key: "formatInstanceText",
           value: function formatInstanceText(labels, legendFormat) {
+            if (legendFormat == "") {
+              return JSON.stringify(labels);
+            }
             var aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
             var text = legendFormat.replace(aliasRegex, function (match, g1) {
               if (labels[g1]) {

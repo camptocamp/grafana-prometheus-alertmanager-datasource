@@ -59,7 +59,7 @@ System.register(["lodash"], function (_export, _context) {
             if (query.targets.length <= 0) {
               return this.q.when({ data: [] });
             }
-            console.log(this);
+            console.log(query);
             // Format data for table panel
             if (query.targets[0].type == "table") {
               return this.backendSrv.datasourceRequest({
@@ -77,7 +77,7 @@ System.register(["lodash"], function (_export, _context) {
                 };
                 for (var i = 0; i < response.data.data.length; i++) {
                   var item = response.data.data[i];
-                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(item.labels), item.labels.alertname, parseInt(item.labels.severity)]);
+                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(item.labels, query.targets[0].legendFormat), item.labels.alertname, parseInt(item.labels.severity)]);
                 };
                 return results;
               });
@@ -123,7 +123,8 @@ System.register(["lodash"], function (_export, _context) {
                 expr: target.expr,
                 refId: target.refId,
                 hide: target.hide,
-                type: target.type || 'timeserie'
+                type: target.type || 'timeserie',
+                legendFormat: target.legendFormat || ""
               };
             });
             options.targets = targets;
@@ -131,19 +132,14 @@ System.register(["lodash"], function (_export, _context) {
           }
         }, {
           key: "formatInstanceText",
-          value: function formatInstanceText(labels, url) {
-            var text = "";
-            if (typeof labels.certname != 'undefined') {
-              text += labels.certname;
-            } else if (typeof labels.rancher_host != 'undefined') {
-              text += labels.rancher_host;
-            }
-            if (typeof labels.instance != 'undefined') {
-              text += "[" + labels.instance + "]";
-            }
-            if (typeof labels.rancher_environment != 'undefined') {
-              text += " (" + labels.rancher_environment + ", " + labels.rancher_url + ")";
-            }
+          value: function formatInstanceText(labels, legendFormat) {
+            var aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
+            var text = legendFormat.replace(aliasRegex, function (match, g1) {
+              if (labels[g1]) {
+                return labels[g1];
+              }
+              return "";
+            });
             return text;
           }
         }]);

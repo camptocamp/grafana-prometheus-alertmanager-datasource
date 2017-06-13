@@ -11,6 +11,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.target = this.target.target || 'Query';
     this.target.type = this.target.type || 'timeserie';
     this.target.expr = this.target.expr || '';
+    this.target.legendFormat = this.target.legendFormat || '';
   }
 
   getOptions(query) {
@@ -29,4 +30,3 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
 }
 
 GenericDatasourceQueryCtrl.templateUrl = 'partials/query.editor.html';
-

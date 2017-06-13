@@ -71,6 +71,7 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
           _this.target.target = _this.target.target || 'Query';
           _this.target.type = _this.target.type || 'timeserie';
           _this.target.expr = _this.target.expr || '';
+          _this.target.legendFormat = _this.target.legendFormat || '';
           return _this;
         }
 

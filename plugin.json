@@ -1,0 +1,19 @@
+{
+  "name": "Prometheus AlertManager",
+  "id": "grafana-prometheus-alertmanager-datasource",
+  "type": "datasource",
+
+  "info": {
+    "description": "Prometheus AlertManager Datasource",
+    "author": {
+      "name": "Leo Depriester",
+      "url": "https://camptocamp.com"
+    },
+    "version": "0.0.1",
+    "updated": "2017-06-19"
+  },
+  "dependencies": {
+    "grafanaVersion": "4.x.x",
+    "plugins": []
+  }
+}

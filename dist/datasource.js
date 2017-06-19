@@ -59,7 +59,6 @@ System.register(["lodash"], function (_export, _context) {
             if (query.targets.length <= 0) {
               return this.q.when({ data: [] });
             }
-            console.log(query);
             // Format data for table panel
             if (query.targets[0].type == "table") {
               return this.backendSrv.datasourceRequest({
@@ -70,7 +69,7 @@ System.register(["lodash"], function (_export, _context) {
               }).then(function (response) {
                 var results = {
                   "data": [{
-                    "columns": [{ "text": "Time", "type": "time" }, { "text": "Instance", "type": "string" }, { "text": "Alertname", "type": "string" }, { "text": "Severity", "type": "Number" }],
+                    "columns": [{ "text": "Time", "type": "time" }, { "text": "Message", "type": "string" }, { "text": "Alertname", "type": "string" }, { "text": "Severity", "type": "Number" }],
                     "rows": [],
                     "type": "table"
                   }]

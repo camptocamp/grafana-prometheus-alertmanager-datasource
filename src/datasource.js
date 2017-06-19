@@ -18,7 +18,6 @@ export class GenericDatasource {
     if (query.targets.length <= 0) {
       return this.q.when({data: []});
     }
-    console.log(query);
     // Format data for table panel
     if(query.targets[0].type == "table"){
       return this.backendSrv.datasourceRequest({
@@ -32,7 +31,7 @@ export class GenericDatasource {
             {
               "columns":[
                 {"text": "Time", "type": "time"},
-                {"text": "Instance", "type": "string"},
+                {"text": "Message", "type": "string"},
                 {"text": "Alertname", "type": "string"},
                 {"text": "Severity", "type": "Number"}
               ],

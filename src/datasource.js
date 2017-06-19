@@ -21,7 +21,7 @@ export class GenericDatasource {
     // Format data for table panel
     if(query.targets[0].type == "table"){
       return this.backendSrv.datasourceRequest({
-        url: this.url + '/api/v1/alerts?filter='+encodeURIComponent(query.targets[0].expr || ""),
+        url: this.url + '/api/v1/alerts?silenced=false&filter='+encodeURIComponent(query.targets[0].expr || ""),
         data: query,
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }

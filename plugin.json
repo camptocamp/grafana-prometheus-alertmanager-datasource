@@ -1,6 +1,6 @@
 {
   "name": "Prometheus AlertManager",
-  "id": "grafana-prometheus-alertmanager-datasource",
+  "id": "camptocamp-prometheus-alertmanager-datasource",
   "type": "datasource",
 
   "info": {

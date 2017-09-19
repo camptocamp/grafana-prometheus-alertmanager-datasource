@@ -35,3 +35,5 @@ grafana
 
 # Test artifacts
 /dist/test/
+
+docker-compose.yml

@@ -1,6 +1,6 @@
 {
   "name": "Prometheus' AlertManager",
-  "id": "prometheus-alertmanager",
+  "id": "camptocamp-prometheus-alertmanager-datasource",
   "type": "datasource",
 
   "partials": {

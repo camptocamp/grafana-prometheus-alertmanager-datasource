@@ -2,7 +2,7 @@
 
 This datasource lets you to use the Alertmanager's API of Prometheus to create dashboards in Grafana.
 
-![Overview](images/overview.png)
+![Overview](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/images/overview.png)
 
 
 # Panels
@@ -20,7 +20,7 @@ Examples:
 
 You can also set multiple parameters like `alertname="DiskFull", df="opt"`.
 
-![Parameters](images/table.png)
+![Parameters](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/images/table.png)
 
 You can display one label or more into the message field by setting labels name into the "Legend format" field.
 

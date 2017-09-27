@@ -33,7 +33,7 @@ export class GenericDatasource {
                 {"text": "Time", "type": "time"},
                 {"text": "Message", "type": "string"},
                 {"text": "Alertname", "type": "string"},
-                {"text": "Severity", "type": "Number"}
+                {"text": "Severity", "type": "string"}
               ],
               "rows": [],
               "type": "table"
@@ -93,7 +93,7 @@ export class GenericDatasource {
         expr: target.expr,
         refId: target.refId,
         hide: target.hide,
-        type: target.type || 'timeserie',
+        type: target.type || 'single',
         legendFormat: target.legendFormat || ""
       };
     });

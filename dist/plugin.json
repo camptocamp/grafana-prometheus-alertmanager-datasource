@@ -1,5 +1,5 @@
 {
-  "name": "Prometheus' AlertManager",
+  "name": "Prometheus AlertManager",
   "id": "camptocamp-prometheus-alertmanager-datasource",
   "type": "datasource",
 
@@ -11,25 +11,20 @@
   "annotations": false,
 
   "info": {
-    "description": "Prometheus' AlertManager datasource",
+    "description": "Prometheus AlertManager Datasource",
     "author": {
-      "name": "Leo Depriester",
+      "name": "Camptocamp",
       "url": "https://camptocamp.com"
     },
-    "logos": {
-      "small": "img/simpleJson_logo.svg",
-      "large": "img/simpleJson_logo.svg"
-    },
     "links": [
-      {"name": "GitHub", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"},
-      {"name": "MIT License", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/LICENSE"}
+      {"name": "Github", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"},
+      {"name": "MIT License", "url": "https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/LICENSE"}
     ],
     "version": "0.0.1",
-    "updated": "2017-06-09"
+    "updated": "2017-06-19"
   },
-
   "dependencies": {
-    "grafanaVersion": "3.x.x",
-    "plugins": [ ]
+    "grafanaVersion": "4.x.x",
+    "plugins": []
   }
 }

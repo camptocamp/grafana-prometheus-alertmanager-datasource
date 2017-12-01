@@ -61,10 +61,10 @@ System.register(["lodash"], function (_export, _context) {
               return this.q.when({ data: [] });
             }
             // Format data for table panel
-            console.log("Use annotations: " + query.targets[0].annotations);
             if (query.targets[0].type == "table") {
+              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr) || "");
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&filter=' + encodeURIComponent(query.targets[0].expr || ""),
+                url: this.url + '/api/v1/alerts?silenced=false&filter=' + filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }

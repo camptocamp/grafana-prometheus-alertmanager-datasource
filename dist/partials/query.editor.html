@@ -12,10 +12,28 @@
       <input type="text" class="gf-form-input" ng-model="ctrl.target.legendFormat" spellcheck='false' placeholder="legend format" data-min-length=0 data-items=1000 ng-model-onblur ng-change="ctrl.onChangeInternal()" />
     </div>
   </div>
-  <div class="gf-form">
-    <div class="gf-form-label width-8 query-keyword">Format</div>
-    <div class="gf-form-select-wrapper">
-      <select class="gf-form-input" ng-model="ctrl.target.type" ng-options="f as f for f in ['single', 'table']"></select>
+
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <div class="gf-form-label width-8 query-keyword">Format</div>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input" ng-model="ctrl.target.type" ng-options="f as f for f in ['single', 'table']"></select>
+      </div>
+    </div>
+
+    <div class="gf-form">
+      <gf-form-switch class="gf-form" label="Use annotations" checked="ctrl.target.annotations" on-change="ctrl.onChangeInternal()">
+        <label for="check-543" class="gf-form-label pointer" ng-show="ctrl.label">
+          Use annotations
+        </label>
+        <div class="gf-form-switch " ng-if="ctrl.show">
+          <input id="check-543" type="checkbox" ng-model="ctrl.target.annotations" ng-change="ctrl.onChangeInternal()" class="ng-pristine ng-untouched ng-valid ng-empty">
+          <label for="check-543" data-on="Yes" data-off="No"></label>
+        </div><!---->
+      </gf-form-switch> 
     </div>
   </div>
+
+</div>
+
 </query-editor-row>

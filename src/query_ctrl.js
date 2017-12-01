@@ -10,6 +10,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.uiSegmentSrv = uiSegmentSrv;
     this.target.target = this.target.target || 'Query';
     this.target.type = this.target.type || 'timeserie';
+    this.target.annotations = this.target.annotations || false;
     this.target.expr = this.target.expr || '';
     this.target.legendFormat = this.target.legendFormat || '';
   }

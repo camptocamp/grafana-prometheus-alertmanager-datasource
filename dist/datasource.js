@@ -39,6 +39,7 @@ System.register(["lodash"], function (_export, _context) {
           _classCallCheck(this, GenericDatasource);
 
           this.type = instanceSettings.type;
+          this.annotations = instanceSettings.annotations;
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
           this.q = $q;
@@ -60,6 +61,7 @@ System.register(["lodash"], function (_export, _context) {
               return this.q.when({ data: [] });
             }
             // Format data for table panel
+            console.log("Use annotations: " + query.targets[0].annotations);
             if (query.targets[0].type == "table") {
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&filter=' + encodeURIComponent(query.targets[0].expr || ""),
@@ -76,7 +78,12 @@ System.register(["lodash"], function (_export, _context) {
                 };
                 for (var i = 0; i < response.data.data.length; i++) {
                   var item = response.data.data[i];
-                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(item.labels, query.targets[0].legendFormat), item.labels.alertname, parseInt(item.labels.severity)]);
+                  if (query.targets[0].annotations) {
+                    var text = item.annotations;
+                  } else {
+                    var text = item.labels;
+                  }
+                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(text, query.targets[0].legendFormat), item.labels.alertname, parseInt(item.labels.severity)]);
                 };
                 return results;
               });
@@ -123,6 +130,7 @@ System.register(["lodash"], function (_export, _context) {
                 refId: target.refId,
                 hide: target.hide,
                 type: target.type || 'single',
+                annotations: target.annotations || false,
                 legendFormat: target.legendFormat || ""
               };
             });

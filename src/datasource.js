@@ -4,6 +4,7 @@ export class GenericDatasource {
 
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
+    this.annotations = instanceSettings.annotations;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.q = $q;
@@ -19,6 +20,7 @@ export class GenericDatasource {
       return this.q.when({data: []});
     }
     // Format data for table panel
+    console.log("Use annotations: "+query.targets[0].annotations);
     if(query.targets[0].type == "table"){
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&filter='+encodeURIComponent(query.targets[0].expr || ""),
@@ -42,9 +44,14 @@ export class GenericDatasource {
         };
         for(var i=0;i<response.data.data.length;i++){
           var item = response.data.data[i];
+          if (query.targets[0].annotations) {
+            var text = item.annotations;
+          } else {
+            var text = item.labels;
+          }
           results.data[0].rows.push([
             Date.parse(item.startsAt),
-            this.formatInstanceText(item.labels, query.targets[0].legendFormat),
+            this.formatInstanceText(text, query.targets[0].legendFormat),
             item.labels.alertname,
             parseInt(item.labels.severity)
           ]);
@@ -94,6 +101,7 @@ export class GenericDatasource {
         refId: target.refId,
         hide: target.hide,
         type: target.type || 'single',
+        annotations: target.annotations || false,
         legendFormat: target.legendFormat || ""
       };
     });

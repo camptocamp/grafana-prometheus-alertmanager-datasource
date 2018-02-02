@@ -7,6 +7,10 @@ export class GenericDatasource {
     this.annotations = instanceSettings.annotations;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
+    this.severityLevels = {};
+    this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = '3';
+    this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()]  = '2';
+    this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()]     = '1';
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
@@ -53,7 +57,7 @@ export class GenericDatasource {
             Date.parse(item.startsAt),
             this.formatInstanceText(text, query.targets[0].legendFormat),
             item.labels.alertname,
-            parseInt(item.labels.severity)
+            this.severityLevels[item.labels.severity]
           ]);
         };
         return results;

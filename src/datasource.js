@@ -49,7 +49,7 @@ export class GenericDatasource {
         for(var i=0;i<response.data.data.length;i++){
           var item = response.data.data[i];
           if (query.targets[0].annotations) {
-            var text = item.annotations;
+            var text = Object.assign(item.annotations, item.labels);
           } else {
             var text = item.labels;
           }

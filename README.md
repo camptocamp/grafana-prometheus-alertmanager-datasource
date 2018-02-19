@@ -30,4 +30,4 @@ Example:
  - `Host: {{host}} / IP: {{ip}}` will display the following content: "Host: [host_value] / IP: [ip_value]"
 
 
-*To set labels in your alerts, you can follow the Prometheus's documentation: [https://prometheus.io/docs/alerting/rules/](https://prometheus.io/docs/alerting/rules/).*
+*To set labels in your alerts, you can follow the Prometheus's documentation: [https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).*

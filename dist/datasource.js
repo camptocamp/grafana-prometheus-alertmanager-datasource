@@ -42,11 +42,10 @@ System.register(['lodash'], function (_export, _context) {
           this.annotations = instanceSettings.annotations;
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
-          console.log(instanceSettings);
           this.severityLevels = {};
-          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = '300';
-          this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()] = '200';
-          this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()] = '100';
+          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = '3';
+          this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()] = '2';
+          this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()] = '1';
           this.q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
@@ -69,7 +68,7 @@ System.register(['lodash'], function (_export, _context) {
             if (query.targets[0].type == "table") {
               var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr) || "");
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&filter=' + filter,
+                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
@@ -93,8 +92,10 @@ System.register(['lodash'], function (_export, _context) {
                 return results;
               });
             } else {
+              console.log("######### TOTO #########");
+              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr) || "");
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&filter=' + encodeURIComponent(query.targets[0].expr || ""),
+                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }

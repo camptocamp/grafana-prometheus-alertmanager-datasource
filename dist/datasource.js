@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-System.register(['lodash'], function (_export, _context) {
+System.register(["lodash"], function (_export, _context) {
   "use strict";
 
   var _, _createClass, GenericDatasource;
@@ -34,7 +34,7 @@ System.register(['lodash'], function (_export, _context) {
         };
       }();
 
-      _export('GenericDatasource', GenericDatasource = function () {
+      _export("GenericDatasource", GenericDatasource = function () {
         function GenericDatasource(instanceSettings, $q, backendSrv, templateSrv) {
           _classCallCheck(this, GenericDatasource);
 
@@ -43,16 +43,16 @@ System.register(['lodash'], function (_export, _context) {
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
           this.severityLevels = {};
-          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = '3';
-          this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()] = '2';
-          this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()] = '1';
+          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = 3;
+          this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()] = 2;
+          this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()] = 1;
           this.q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
         }
 
         _createClass(GenericDatasource, [{
-          key: 'query',
+          key: "query",
           value: function query(options) {
             var _this = this;
 
@@ -108,7 +108,7 @@ System.register(['lodash'], function (_export, _context) {
             }
           }
         }, {
-          key: 'testDatasource',
+          key: "testDatasource",
           value: function testDatasource() {
             return this.backendSrv.datasourceRequest({
               url: this.url + '/api/v1/status',
@@ -120,7 +120,7 @@ System.register(['lodash'], function (_export, _context) {
             });
           }
         }, {
-          key: 'buildQueryParameters',
+          key: "buildQueryParameters",
           value: function buildQueryParameters(options) {
             var _this2 = this;
 
@@ -143,7 +143,7 @@ System.register(['lodash'], function (_export, _context) {
             return options;
           }
         }, {
-          key: 'formatInstanceText',
+          key: "formatInstanceText",
           value: function formatInstanceText(labels, legendFormat) {
             if (legendFormat == "") {
               return JSON.stringify(labels);
@@ -162,7 +162,7 @@ System.register(['lodash'], function (_export, _context) {
         return GenericDatasource;
       }());
 
-      _export('GenericDatasource', GenericDatasource);
+      _export("GenericDatasource", GenericDatasource);
     }
   };
 });

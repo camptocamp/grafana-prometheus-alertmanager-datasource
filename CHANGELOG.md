@@ -1,3 +1,10 @@
+## 0.0.4 (March 26, 2018)
+
+- Datasource:
+
+  * Allow manual definition of severity levels
+  * Fix templating and add support of All and Multi variables
+
 ## 0.0.3 (December 01, 2017)
 
 - Datasource:

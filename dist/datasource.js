@@ -39,7 +39,6 @@ System.register(["lodash"], function (_export, _context) {
           _classCallCheck(this, GenericDatasource);
 
           this.type = instanceSettings.type;
-          this.annotations = instanceSettings.annotations;
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
           this.severityLevels = {};
@@ -82,11 +81,7 @@ System.register(["lodash"], function (_export, _context) {
                 };
                 for (var i = 0; i < response.data.data.length; i++) {
                   var item = response.data.data[i];
-                  if (query.targets[0].annotations) {
-                    var text = item.annotations;
-                  } else {
-                    var text = item.labels;
-                  }
+                  var text = Object.assign({}, item.annotations, item.labels);
                   results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(text, query.targets[0].legendFormat), item.labels.alertname, _this.severityLevels[item.labels.severity]]);
                 };
                 return results;
@@ -135,7 +130,6 @@ System.register(["lodash"], function (_export, _context) {
                 refId: target.refId,
                 hide: target.hide,
                 type: target.type || 'single',
-                annotations: target.annotations || false,
                 legendFormat: target.legendFormat || ""
               };
             });

@@ -4,7 +4,6 @@ export class GenericDatasource {
 
   constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
-    this.annotations = instanceSettings.annotations;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.severityLevels = {};
@@ -48,11 +47,7 @@ export class GenericDatasource {
         };
         for(var i=0;i<response.data.data.length;i++){
           var item = response.data.data[i];
-          if (query.targets[0].annotations) {
-            var text = Object.assign(item.annotations, item.labels);
-          } else {
-            var text = item.labels;
-          }
+          var text = Object.assign({}, item.annotations, item.labels);
           results.data[0].rows.push([
             Date.parse(item.startsAt),
             this.formatInstanceText(text, query.targets[0].legendFormat),
@@ -106,7 +101,6 @@ export class GenericDatasource {
         refId: target.refId,
         hide: target.hide,
         type: target.type || 'single',
-        annotations: target.annotations || false,
         legendFormat: target.legendFormat || ""
       };
     });

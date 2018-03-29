@@ -20,8 +20,8 @@
       {"name": "Github", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"},
       {"name": "MIT License", "url": "https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/LICENSE"}
     ],
-    "version": "0.0.3",
-    "updated": "2017-12-01"
+    "version": "0.0.4",
+    "updated": "2018-03-29"
   },
   "dependencies": {
     "grafanaVersion": "4.x.x",

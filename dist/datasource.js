@@ -64,7 +64,7 @@ System.register(["lodash"], function (_export, _context) {
               return this.q.when({ data: [] });
             }
             // Format data for table panel
-            if (query.targets[0].type == "table") {
+            if (query.targets[0].type === "table") {
               var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
@@ -74,22 +74,36 @@ System.register(["lodash"], function (_export, _context) {
               }).then(function (response) {
                 var results = {
                   "data": [{
-                    "columns": [{ "text": "Time", "type": "time" }, { "text": "Message", "type": "string" }, { "text": "Alertname", "type": "string" }, { "text": "Severity", "type": "string" }],
                     "rows": [],
+                    "columns": [],
                     "type": "table"
                   }]
                 };
-                for (var i = 0; i < response.data.data.length; i++) {
-                  var item = response.data.data[i];
-                  var text = Object.assign({}, item.annotations, item.labels);
-                  results.data[0].rows.push([Date.parse(item.startsAt), _this.formatInstanceText(text, query.targets[0].legendFormat), item.labels.alertname, _this.severityLevels[item.labels.severity]]);
-                };
+
+                if (response.data && response.data.data && response.data.data.length) {
+                  var severity = response.data.data[0].labels.severity;
+                  delete response.data.data[0].labels.severity;
+                  results.data[0].columns = _this.getColumns(response.data.data[0]);
+                  //console.log('here');
+                  for (var i = 0; i < response.data.data.length; i++) {
+                    //console.log('here' + i);
+
+                    var item = response.data.data[i];
+                    delete item.labels.severity;
+                    var labelValues = Object.values(item.labels);
+                    var annotationValues = Object.values(item.annotations);
+                    var row = [Date.parse(item.startsAt)].concat(labelValues).concat(annotationValues);
+                    row.push([_this.severityLevels[severity]]);
+                    results.data[0].rows.push(row);
+                  }
+                }
+                //console.log(JSON.stringify(results));
                 return results;
               });
             } else {
-              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+              var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
+                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + _filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
@@ -101,6 +115,63 @@ System.register(["lodash"], function (_export, _context) {
                 };
               });
             }
+          }
+        }, {
+          key: "getColumns",
+          value: function getColumns(dataRow) {
+            var columns = [{ text: "Time", type: "time" }];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+              for (var _iterator = Object.keys(dataRow.labels)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var label = _step.value;
+
+                columns.push({ text: label, type: "string" });
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+              for (var _iterator2 = Object.keys(dataRow['annotations'])[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var annotation = _step2.value;
+
+                columns.push({ text: annotation, type: "string" });
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
+              }
+            }
+
+            columns.push({ text: "severity", type: "string" });
+            return columns;
           }
         }, {
           key: "testDatasource",
@@ -123,7 +194,7 @@ System.register(["lodash"], function (_export, _context) {
             options.targets = _.filter(options.targets, function (target) {
               return target.target !== 'select metric';
             });
-            var targets = _.map(options.targets, function (target) {
+            options.targetss = _.map(options.targets, function (target) {
               return {
                 target: _this2.templateSrv.replace(target.target),
                 expr: target.expr,
@@ -133,23 +204,21 @@ System.register(["lodash"], function (_export, _context) {
                 legendFormat: target.legendFormat || ""
               };
             });
-            options.targets = targets;
             return options;
           }
         }, {
           key: "formatInstanceText",
           value: function formatInstanceText(labels, legendFormat) {
-            if (legendFormat == "") {
+            if (legendFormat === "") {
               return JSON.stringify(labels);
             }
             var aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
-            var text = legendFormat.replace(aliasRegex, function (match, g1) {
+            return legendFormat.replace(aliasRegex, function (match, g1) {
               if (labels[g1]) {
                 return labels[g1];
               }
               return "";
             });
-            return text;
           }
         }]);
 

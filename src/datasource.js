@@ -23,42 +23,44 @@ export class GenericDatasource {
       return this.q.when({data: []});
     }
     // Format data for table panel
-    if(query.targets[0].type == "table"){
-      var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+    if(query.targets[0].type === "table"){
+      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       }).then(response => {
-        var results = {
-          "data": [
-            {
-              "columns":[
-                {"text": "Time", "type": "time"},
-                {"text": "Message", "type": "string"},
-                {"text": "Alertname", "type": "string"},
-                {"text": "Severity", "type": "string"}
-              ],
-              "rows": [],
-              "type": "table"
-            }
-          ]
-        };
-        for(var i=0;i<response.data.data.length;i++){
-          var item = response.data.data[i];
-          var text = Object.assign({}, item.annotations, item.labels);
-          results.data[0].rows.push([
-            Date.parse(item.startsAt),
-            this.formatInstanceText(text, query.targets[0].legendFormat),
-            item.labels.alertname,
-            this.severityLevels[item.labels.severity]
-          ]);
-        };
-        return results;
+          let results = {
+              "data": [{
+                  "rows": [],
+                  "columns": [],
+                  "type": "table"
+              }]
+          };
+
+          if(response.data && response.data.data && response.data.data.length) {
+              let severity = response.data.data[0].labels.severity;
+              delete response.data.data[0].labels.severity;
+              results.data[0].columns = this.getColumns(response.data.data[0]);
+              //console.log('here');
+              for (let i = 0; i < response.data.data.length; i++) {
+                  //console.log('here' + i);
+
+                  let item = response.data.data[i];
+                  delete item.labels.severity;
+                  let labelValues = Object.values(item.labels);
+                  let annotationValues = Object.values(item.annotations);
+                  let row = [Date.parse(item.startsAt)].concat(labelValues).concat(annotationValues);
+                  row.push([this.severityLevels[severity]]);
+                  results.data[0].rows.push(row);
+              }
+          }
+          //console.log(JSON.stringify(results));
+          return results;
       });
     }else{
-      var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,
@@ -78,6 +80,18 @@ export class GenericDatasource {
     }
   }
 
+    getColumns(dataRow) {
+        let columns =  [{ text: "Time", type: "time" }];
+        for(let label of Object.keys(dataRow.labels)) {
+            columns.push({ text: label, type: "string" })
+        }
+        for(let annotation of Object.keys(dataRow['annotations'])) {
+            columns.push({ text: annotation, type: "string" })
+        }
+        columns.push({ text: "severity", type: "string" });
+        return columns;
+    }
+
   testDatasource() {
     return this.backendSrv.datasourceRequest({
       url: this.url + '/api/v1/status',
@@ -94,7 +108,7 @@ export class GenericDatasource {
       options.targets = _.filter(options.targets, target => {
       return target.target !== 'select metric';
     });
-    var targets = _.map(options.targets, target => {
+      options.targetss = _.map(options.targets, target => {
       return {
         target: this.templateSrv.replace(target.target),
         expr: target.expr,
@@ -104,21 +118,19 @@ export class GenericDatasource {
         legendFormat: target.legendFormat || ""
       };
     });
-    options.targets = targets;
     return options;
   }
 
   formatInstanceText(labels, legendFormat){
-    if(legendFormat == ""){
+    if(legendFormat === ""){
       return JSON.stringify(labels);
     }
-    var aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
-    var text = legendFormat.replace(aliasRegex, function(match, g1) {
+    let aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
+    return legendFormat.replace(aliasRegex, function(match, g1) {
       if (labels[g1]) {
         return labels[g1];
       }
       return "";
     });
-    return text;
   }
 }

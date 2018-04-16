@@ -42,7 +42,8 @@ System.register(["lodash"], function (_export, _context) {
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
           this.severityLevels = {};
-          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = 3;
+          this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = 4;
+          this.severityLevels[instanceSettings.jsonData.severity.high.toLowerCase()] = 3;
           this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()] = 2;
           this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()] = 1;
           this.q = $q;
@@ -84,10 +85,7 @@ System.register(["lodash"], function (_export, _context) {
                   var severity = response.data.data[0].labels.severity;
                   delete response.data.data[0].labels.severity;
                   results.data[0].columns = _this.getColumns(response.data.data[0]);
-                  //console.log('here');
                   for (var i = 0; i < response.data.data.length; i++) {
-                    //console.log('here' + i);
-
                     var item = response.data.data[i];
                     delete item.labels.severity;
                     var labelValues = Object.values(item.labels);
@@ -97,7 +95,6 @@ System.register(["lodash"], function (_export, _context) {
                     results.data[0].rows.push(row);
                   }
                 }
-                //console.log(JSON.stringify(results));
                 return results;
               });
             } else {

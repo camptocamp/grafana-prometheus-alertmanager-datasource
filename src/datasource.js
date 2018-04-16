@@ -7,9 +7,10 @@ export class GenericDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.severityLevels = {};
-    this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()] = 3;
-    this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()]  = 2;
-    this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()]     = 1;
+    this.severityLevels[instanceSettings.jsonData.severity.critical.toLowerCase()]  = 4;
+    this.severityLevels[instanceSettings.jsonData.severity.high.toLowerCase()]      = 3;
+    this.severityLevels[instanceSettings.jsonData.severity.warning.toLowerCase()]   = 2;
+    this.severityLevels[instanceSettings.jsonData.severity.info.toLowerCase()]      = 1;
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
@@ -43,10 +44,7 @@ export class GenericDatasource {
               let severity = response.data.data[0].labels.severity;
               delete response.data.data[0].labels.severity;
               results.data[0].columns = this.getColumns(response.data.data[0]);
-              //console.log('here');
               for (let i = 0; i < response.data.data.length; i++) {
-                  //console.log('here' + i);
-
                   let item = response.data.data[i];
                   delete item.labels.severity;
                   let labelValues = Object.values(item.labels);
@@ -56,7 +54,6 @@ export class GenericDatasource {
                   results.data[0].rows.push(row);
               }
           }
-          //console.log(JSON.stringify(results));
           return results;
       });
     }else{

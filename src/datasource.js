@@ -52,7 +52,13 @@ export class GenericDatasource {
 
                         for (let label of Object.keys(item['labels'])) {
                             if(label in columnsDict) {
-                                row[columnsDict[label]] = item['labels'][label];
+                                if(label === 'severity') {
+                                    row[columnsDict[label]] = this.severityLevels[item['labels'][label]]
+                                }
+                                else {
+                                    row[columnsDict[label]] = item['labels'][label];
+                                }
+
                             }
                         }
                         for (let annotation of Object.keys(item['annotations'])) {

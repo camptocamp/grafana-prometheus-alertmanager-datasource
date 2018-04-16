@@ -99,7 +99,11 @@ System.register(["lodash"], function (_export, _context) {
                                                 var label = _step.value;
 
                                                 if (label in columnsDict) {
-                                                    row[columnsDict[label]] = item['labels'][label];
+                                                    if (label === 'severity') {
+                                                        row[columnsDict[label]] = _this.severityLevels[item['labels'][label]];
+                                                    } else {
+                                                        row[columnsDict[label]] = item['labels'][label];
+                                                    }
                                                 }
                                             }
                                         } catch (err) {

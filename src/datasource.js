@@ -25,6 +25,7 @@ export class GenericDatasource {
         }
         // Format data for table panel
         if(query.targets[0].type === "table"){
+            var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
             let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
             return this.backendSrv.datasourceRequest({
                     url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
@@ -42,7 +43,7 @@ export class GenericDatasource {
                     };
 
                 if(response.data && response.data.data && response.data.data.length) {
-                    let columnsDict = this.getColumnsDict(response.data.data);
+                    let columnsDict = this.getColumnsDict(response.data.data, labelSelector);
                     results.data[0].columns = this.getColumns(columnsDict);
 
                     for (let i = 0; i < response.data.data.length; i++) {
@@ -94,19 +95,38 @@ export class GenericDatasource {
         return columns;
     }
 
+    // Parses the label list into a map
+    parseLabelSelector(input) {
+        var map;
+        if (typeof(input) === "undefined" || input.trim().length === 0) {
+            map = ["*"];
+        } else {
+            map = input.trim().split(/\s*,\s*/);
+        }
+        return map;
+    }
+
     // Creates a column index dictionary in to assist in data row construction
-    getColumnsDict(data) {
+    getColumnsDict(data, labelSelector) {
         let index = 1; // 0 is the data column
         let columnsDict = {};
         for (let i = 0; i < data.length; i++) {
-            for (let label of Object.keys(data[i]['labels'])) {
-                if(!(label in columnsDict) && label !== 'severity') {
-                    columnsDict[label] = index++;
-                }
-            }
-            for (let annotation of Object.keys(data[i]['annotations'])) {
-                if(!(annotation in columnsDict)) {
-                    columnsDict[annotation] = index++;
+            for (let labelIndex = 0; labelIndex < labelSelector.length; labelIndex++) {
+                var selectedLabel = labelSelector[labelIndex];
+                if (selectedLabel === "*") {
+                    // '*' maps to all labels/annotations not already added via the label selector list
+                    for (let label of Object.keys(data[i]['labels'])) {
+                        if(!(label in columnsDict) && label !== 'severity') {
+                            columnsDict[label] = index++;
+                        }
+                    }
+                    for (let annotation of Object.keys(data[i]['annotations'])) {
+                        if(!(annotation in columnsDict)) {
+                            columnsDict[annotation] = index++;
+                        }
+                    }
+                } else if (!(selectedLabel in columnsDict)) {
+                    columnsDict[selectedLabel] = index++;
                 }
             }
         }

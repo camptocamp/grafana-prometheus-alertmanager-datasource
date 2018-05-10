@@ -66,6 +66,7 @@ System.register(["lodash"], function (_export, _context) {
                         }
                         // Format data for table panel
                         if (query.targets[0].type === "table") {
+                            var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
                             var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
                             return this.backendSrv.datasourceRequest({
                                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
@@ -82,7 +83,7 @@ System.register(["lodash"], function (_export, _context) {
                                 };
 
                                 if (response.data && response.data.data && response.data.data.length) {
-                                    var columnsDict = _this.getColumnsDict(response.data.data);
+                                    var columnsDict = _this.getColumnsDict(response.data.data, labelSelector);
                                     results.data[0].columns = _this.getColumns(columnsDict);
 
                                     for (var i = 0; i < response.data.data.length; i++) {
@@ -199,62 +200,81 @@ System.register(["lodash"], function (_export, _context) {
                         return columns;
                     }
                 }, {
+                    key: "parseLabelSelector",
+                    value: function parseLabelSelector(input) {
+                        var map;
+                        if (typeof input === "undefined" || input.trim().length === 0) {
+                            map = ["*"];
+                        } else {
+                            map = input.trim().split(/\s*,\s*/);
+                        }
+                        return map;
+                    }
+                }, {
                     key: "getColumnsDict",
-                    value: function getColumnsDict(data) {
+                    value: function getColumnsDict(data, labelSelector) {
                         var index = 1; // 0 is the data column
                         var columnsDict = {};
                         for (var i = 0; i < data.length; i++) {
-                            var _iteratorNormalCompletion4 = true;
-                            var _didIteratorError4 = false;
-                            var _iteratorError4 = undefined;
+                            for (var labelIndex = 0; labelIndex < labelSelector.length; labelIndex++) {
+                                var selectedLabel = labelSelector[labelIndex];
+                                if (selectedLabel === "*") {
+                                    var _iteratorNormalCompletion4 = true;
+                                    var _didIteratorError4 = false;
+                                    var _iteratorError4 = undefined;
 
-                            try {
-                                for (var _iterator4 = Object.keys(data[i]['labels'])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                                    var label = _step4.value;
+                                    try {
+                                        // '*' maps to all labels/annotations not already added via the label selector list
+                                        for (var _iterator4 = Object.keys(data[i]['labels'])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                                            var label = _step4.value;
 
-                                    if (!(label in columnsDict) && label !== 'severity') {
-                                        columnsDict[label] = index++;
+                                            if (!(label in columnsDict) && label !== 'severity') {
+                                                columnsDict[label] = index++;
+                                            }
+                                        }
+                                    } catch (err) {
+                                        _didIteratorError4 = true;
+                                        _iteratorError4 = err;
+                                    } finally {
+                                        try {
+                                            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                                                _iterator4.return();
+                                            }
+                                        } finally {
+                                            if (_didIteratorError4) {
+                                                throw _iteratorError4;
+                                            }
+                                        }
                                     }
-                                }
-                            } catch (err) {
-                                _didIteratorError4 = true;
-                                _iteratorError4 = err;
-                            } finally {
-                                try {
-                                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                                        _iterator4.return();
-                                    }
-                                } finally {
-                                    if (_didIteratorError4) {
-                                        throw _iteratorError4;
-                                    }
-                                }
-                            }
 
-                            var _iteratorNormalCompletion5 = true;
-                            var _didIteratorError5 = false;
-                            var _iteratorError5 = undefined;
+                                    var _iteratorNormalCompletion5 = true;
+                                    var _didIteratorError5 = false;
+                                    var _iteratorError5 = undefined;
 
-                            try {
-                                for (var _iterator5 = Object.keys(data[i]['annotations'])[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                                    var annotation = _step5.value;
+                                    try {
+                                        for (var _iterator5 = Object.keys(data[i]['annotations'])[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                                            var annotation = _step5.value;
 
-                                    if (!(annotation in columnsDict)) {
-                                        columnsDict[annotation] = index++;
+                                            if (!(annotation in columnsDict)) {
+                                                columnsDict[annotation] = index++;
+                                            }
+                                        }
+                                    } catch (err) {
+                                        _didIteratorError5 = true;
+                                        _iteratorError5 = err;
+                                    } finally {
+                                        try {
+                                            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                                _iterator5.return();
+                                            }
+                                        } finally {
+                                            if (_didIteratorError5) {
+                                                throw _iteratorError5;
+                                            }
+                                        }
                                     }
-                                }
-                            } catch (err) {
-                                _didIteratorError5 = true;
-                                _iteratorError5 = err;
-                            } finally {
-                                try {
-                                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                                        _iterator5.return();
-                                    }
-                                } finally {
-                                    if (_didIteratorError5) {
-                                        throw _iteratorError5;
-                                    }
+                                } else if (!(selectedLabel in columnsDict)) {
+                                    columnsDict[selectedLabel] = index++;
                                 }
                             }
                         }

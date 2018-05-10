@@ -73,6 +73,7 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
           _this.target.annotations = _this.target.annotations || false;
           _this.target.expr = _this.target.expr || '';
           _this.target.legendFormat = _this.target.legendFormat || '';
+          _this.target.labelSelector = _this.target.labelSelector || '*';
           return _this;
         }
 

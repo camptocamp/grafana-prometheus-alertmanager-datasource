@@ -1,3 +1,10 @@
+## 0.0.5 (May 23, 2018)
+
+- Datasource:
+
+  * Display annotations and labels in separate columns
+  * Add a selector in query editor to choose the columns to display
+
 ## 0.0.4 (March 29, 2018)
 
 - Datasource:

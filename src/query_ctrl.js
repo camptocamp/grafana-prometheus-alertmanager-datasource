@@ -13,6 +13,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.annotations = this.target.annotations || false;
     this.target.expr = this.target.expr || '';
     this.target.legendFormat = this.target.legendFormat || '';
+    this.target.labelSelector = this.target.labelSelector || '*';
   }
 
   getOptions(query) {

@@ -27,8 +27,10 @@ export class GenericDatasource {
         if(query.targets[0].type === "table"){
             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
             let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+            let showAlertStatus = query.targets[0].silenced || query.targets[0].inhibited;
+
             return this.backendSrv.datasourceRequest({
-                    url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+                    url: this.url + '/api/v1/alerts?silenced='+query.targets[0].silenced+'&inhibited='+query.targets[0].inhibited+'&filter='+filter,
                     data: query,
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
@@ -43,7 +45,7 @@ export class GenericDatasource {
                     };
 
                 if(response.data && response.data.data && response.data.data.length) {
-                    let columnsDict = this.getColumnsDict(response.data.data, labelSelector);
+                    let columnsDict = this.getColumnsDict(response.data.data, labelSelector, showAlertStatus);
                     results.data[0].columns = this.getColumns(columnsDict);
 
                     for (let i = 0; i < response.data.data.length; i++) {
@@ -67,6 +69,9 @@ export class GenericDatasource {
                                 row[columnsDict[annotation]] = item['annotations'][annotation];
                             }
                         }
+                        if (showAlertStatus) {
+                          row[columnsDict["alert_status"]] = (query.targets[0].statusAsNumber) ? this.getStatusNumber(item["status"]["state"]) : item["status"]["state"];
+                        }
                         results.data[0].rows.push(row);
                     }
                 }
@@ -75,7 +80,7 @@ export class GenericDatasource {
         } else {
             let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
                 return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+                url: this.url + '/api/v1/alerts?silenced='+query.targets[0].silenced+'&inhibited='+query.targets[0].inhibited+'&filter='+filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
@@ -88,7 +93,12 @@ export class GenericDatasource {
     }
 
     getColumns(columnsDict) {
-        let columns =  [{ text: "Time", type: "time" }];
+        let columns =  [
+          {
+            text: "Time",
+            type: "time"
+          }
+        ];
         for(let column of Object.keys(columnsDict)) {
             columns.push({ text: column, type: "string" })
         }
@@ -107,7 +117,7 @@ export class GenericDatasource {
     }
 
     // Creates a column index dictionary in to assist in data row construction
-    getColumnsDict(data, labelSelector) {
+    getColumnsDict(data, labelSelector, showAlertStatus) {
         let index = 1; // 0 is the data column
         let columnsDict = {};
         for (let i = 0; i < data.length; i++) {
@@ -130,8 +140,22 @@ export class GenericDatasource {
                 }
             }
         }
+        if (showAlertStatus) {
+          columnsDict['alert_status'] = index++; 
+        }
         columnsDict['severity'] = index;
+
         return columnsDict;
+    }
+
+    // getStatusNumber returns a number depending on the alert status
+    getStatusNumber(state) {
+      let statusDict = {
+        "active": 0,
+        "unprocessed": 1,
+        "suppressed": 2,
+      }
+      return statusDict[state];
     }
 
     testDatasource() {
@@ -157,7 +181,9 @@ export class GenericDatasource {
             refId: target.refId,
             hide: target.hide,
             type: target.type || 'single',
-            legendFormat: target.legendFormat || ""
+            legendFormat: target.legendFormat || "",
+            silenced: target.silenced,
+            inhibited: target.inhibited
           };
         });
         return options;

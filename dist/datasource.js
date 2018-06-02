@@ -68,8 +68,10 @@ System.register(["lodash"], function (_export, _context) {
                         if (query.targets[0].type === "table") {
                             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
                             var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+                            var showAlertStatus = query.targets[0].silenced || query.targets[0].inhibited;
+
                             return this.backendSrv.datasourceRequest({
-                                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
+                                url: this.url + '/api/v1/alerts?silenced=' + query.targets[0].silenced + '&inhibited=' + query.targets[0].inhibited + '&filter=' + filter,
                                 data: query,
                                 method: 'GET',
                                 headers: { 'Content-Type': 'application/json' }
@@ -83,7 +85,7 @@ System.register(["lodash"], function (_export, _context) {
                                 };
 
                                 if (response.data && response.data.data && response.data.data.length) {
-                                    var columnsDict = _this.getColumnsDict(response.data.data, labelSelector);
+                                    var columnsDict = _this.getColumnsDict(response.data.data, labelSelector, showAlertStatus);
                                     results.data[0].columns = _this.getColumns(columnsDict);
 
                                     for (var i = 0; i < response.data.data.length; i++) {
@@ -149,6 +151,9 @@ System.register(["lodash"], function (_export, _context) {
                                             }
                                         }
 
+                                        if (showAlertStatus) {
+                                            row[columnsDict["alert_status"]] = query.targets[0].statusAsNumber ? _this.getStatusNumber(item["status"]["state"]) : item["status"]["state"];
+                                        }
                                         results.data[0].rows.push(row);
                                     }
                                 }
@@ -157,7 +162,7 @@ System.register(["lodash"], function (_export, _context) {
                         } else {
                             var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
                             return this.backendSrv.datasourceRequest({
-                                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + _filter,
+                                url: this.url + '/api/v1/alerts?silenced=' + query.targets[0].silenced + '&inhibited=' + query.targets[0].inhibited + '&filter=' + _filter,
                                 data: query,
                                 method: 'GET',
                                 headers: { 'Content-Type': 'application/json' }
@@ -171,7 +176,10 @@ System.register(["lodash"], function (_export, _context) {
                 }, {
                     key: "getColumns",
                     value: function getColumns(columnsDict) {
-                        var columns = [{ text: "Time", type: "time" }];
+                        var columns = [{
+                            text: "Time",
+                            type: "time"
+                        }];
                         var _iteratorNormalCompletion3 = true;
                         var _didIteratorError3 = false;
                         var _iteratorError3 = undefined;
@@ -212,7 +220,7 @@ System.register(["lodash"], function (_export, _context) {
                     }
                 }, {
                     key: "getColumnsDict",
-                    value: function getColumnsDict(data, labelSelector) {
+                    value: function getColumnsDict(data, labelSelector, showAlertStatus) {
                         var index = 1; // 0 is the data column
                         var columnsDict = {};
                         for (var i = 0; i < data.length; i++) {
@@ -278,8 +286,22 @@ System.register(["lodash"], function (_export, _context) {
                                 }
                             }
                         }
+                        if (showAlertStatus) {
+                            columnsDict['alert_status'] = index++;
+                        }
                         columnsDict['severity'] = index;
+
                         return columnsDict;
+                    }
+                }, {
+                    key: "getStatusNumber",
+                    value: function getStatusNumber(state) {
+                        var statusDict = {
+                            "active": 0,
+                            "unprocessed": 1,
+                            "suppressed": 2
+                        };
+                        return statusDict[state];
                     }
                 }, {
                     key: "testDatasource",
@@ -309,7 +331,9 @@ System.register(["lodash"], function (_export, _context) {
                                 refId: target.refId,
                                 hide: target.hide,
                                 type: target.type || 'single',
-                                legendFormat: target.legendFormat || ""
+                                legendFormat: target.legendFormat || "",
+                                silenced: target.silenced,
+                                inhibited: target.inhibited
                             };
                         });
                         return options;

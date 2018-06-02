@@ -69,11 +69,14 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
           _this.scope = $scope;
           _this.uiSegmentSrv = uiSegmentSrv;
           _this.target.target = _this.target.target || 'Query';
-          _this.target.type = _this.target.type || 'timeserie';
+          _this.target.type = _this.target.type || 'single';
           _this.target.annotations = _this.target.annotations || false;
           _this.target.expr = _this.target.expr || '';
           _this.target.legendFormat = _this.target.legendFormat || '';
           _this.target.labelSelector = _this.target.labelSelector || '*';
+          _this.target.silenced = _this.target.silenced || false;
+          _this.target.inhibited = _this.target.inhibited || false;
+          _this.target.statusAsNumber = _this.target.statusAsNumber || false;
           return _this;
         }
 

@@ -9,11 +9,14 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.scope = $scope;
     this.uiSegmentSrv = uiSegmentSrv;
     this.target.target = this.target.target || 'Query';
-    this.target.type = this.target.type || 'timeserie';
+    this.target.type = this.target.type || 'single';
     this.target.annotations = this.target.annotations || false;
     this.target.expr = this.target.expr || '';
     this.target.legendFormat = this.target.legendFormat || '';
     this.target.labelSelector = this.target.labelSelector || '*';
+    this.target.silenced = this.target.silenced || false;
+    this.target.inhibited = this.target.inhibited || false;
+    this.target.statusAsNumber = this.target.statusAsNumber || false;
   }
 
   getOptions(query) {

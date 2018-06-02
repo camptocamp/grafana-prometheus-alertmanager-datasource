@@ -1,19 +1,58 @@
 <query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
   <div class="gf-form-inline">
     <div class="gf-form gf-form--grow">
-      <textarea rows="3" class="gf-form-input" ng-model="ctrl.target.expr" spellcheck="false" placeholder="query expression" data-min-length=0 data-items=100 ng-model-onblur ng-change="ctrl.onChangeInternal()"></textarea>
+      <input class="gf-form-input" ng-model="ctrl.target.expr" spellcheck="false" placeholder="Filters" data-min-length=0 data-items=100 ng-model-onblur ng-change="ctrl.onChangeInternal()"></textarea>
     </div>
   </div>
 
-
   <div class="gf-form-inline">
+    <gf-form-switch class="gf-form" label-class="width-8" label="Include silenced" on-change="ctrl.onChangeInternal()" checked="ctrl.target.silenced">
+      <label for="check-silenced" class="gf-form-label width-8 pointer" ng-show="ctrl.label">
+        Include silenced
+      </label>
+      <div class="gf-form-switch " ng-if="ctrl.show">
+        <input id="check-silenced" ng-model="ctrl.target.silenced" ng-change="ctrl.onChangeInternal()" class="ng-pristine ng-untouched ng-valid ng-empty" type="checkbox">
+        <label for="check-silenced" data-on="true" data-off="false"></label>
+      </div>
+    </gf-form-switch>
+    <gf-form-switch class="gf-form" label-class="width-9" label="Include inhibited" on-change="ctrl.onChangeInternal()" checked="ctrl.target.inhibited">
+      <label for="check-inhibited" class="gf-form-label width-8 pointer" ng-show="ctrl.label">
+        Include silenced
+      </label>
+      <div class="gf-form-switch " ng-if="ctrl.show">
+        <input id="check-inhibited" ng-model="ctrl.target.inhibited" ng-change="ctrl.onChangeInternal()" class="ng-pristine ng-untouched ng-valid ng-empty" type="checkbox">
+        <label for="check-inhibited" data-on="true" data-off="false"></label>
+      </div>
+    </gf-form-switch>
+    <gf-form-switch ng-if="ctrl.target.type != 'single'" class="gf-form" label-class="width-12" label="Render status as number" on-change="ctrl.onChangeInternal()" checked="ctrl.target.statusAsNumber">
+      <label for="check-status" class="gf-form-label width-8 pointer" ng-show="ctrl.label">
+        Render status as number
+      </label>
+      <div class="gf-form-switch" ng-if="ctrl.show">
+        <input id="check-status" ng-model="ctrl.target.statusAsNumber" ng-change="ctrl.onChangeInternal()" class="ng-pristine ng-untouched ng-valid ng-empty" type="checkbox">
+        <label for="check-status" data-on="true" data-off="false"></label>
+      </div>
+    </gf-form-switch>
+    <gf-form-switch ng-if="ctrl.target.type == 'single'" class="gf-form" label-class="width-12" label="Render status as number" on-change="ctrl.onChangeInternal()" checked="ctrl.target.statusAsNumber">
+      <label for="check-status" class="gf-form-label width-8 pointer" ng-show="ctrl.label">
+        Render status as number
+      </label>
+      <div class="gf-form-switch" ng-if="ctrl.show">
+        <input id="check-status" ng-model="ctrl.target.statusAsNumber" ng-change="ctrl.onChangeInternal()" class="ng-pristine ng-untouched ng-valid ng-empty" type="checkbox">
+        <label for="check-status" data-on="true" data-off="false"></label>
+      </div>
+    </gf-form-switch>
+
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.target.type != 'single'">
     <div class="gf-form gf-form--grow">
       <label class="gf-form-label width-8">Legend format</label>
       <input type="text" class="gf-form-input" ng-model="ctrl.target.legendFormat" spellcheck='false' placeholder="legend format" data-min-length=0 data-items=1000 ng-model-onblur ng-change="ctrl.onChangeInternal()" />
     </div>
   </div>
 
-  <div class="gf-form-inline">
+  <div class="gf-form-inline" ng-if="ctrl.target.type != 'single'">
     <div class="gf-form gf-form--grow">
       <label class="gf-form-label width-8">Labels</label>
       <input type="text" class="gf-form-input" ng-model="ctrl.target.labelSelector" spellcheck="false" placeholder="comma-separated label/annotation list" data-min-length=0 data-items=1000 ng-model-onblur ng-change="ctrl.onChangeInternal()"/>

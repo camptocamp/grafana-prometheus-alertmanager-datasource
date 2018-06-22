@@ -1,3 +1,8 @@
+## 0.0.6 (May 22, 2018)
+
+  * Use Apache License 2.0
+  * Fix severity labels struct (#26)
+
 ## 0.0.5 (May 23, 2018)
 
 - Datasource:

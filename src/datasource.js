@@ -6,6 +6,7 @@ export class GenericDatasource {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
+    this.silenced = instanceSettings.jsonData.silenced;
     this.severityLevels = {}
     this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()]  = 4;
     this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()]      = 3;
@@ -28,7 +29,7 @@ export class GenericDatasource {
             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
             let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
             return this.backendSrv.datasourceRequest({
-                    url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+                    url: `${this.url}/api/v1/alerts?silenced=${this.silenced}&inhibited=false&filter=${filter}`,
                     data: query,
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }

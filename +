@@ -1,0 +1,43 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  api_port: "8080"
+  cluster_history_entries: "1000"
+  cluster_labels: application:spilo
+  cluster_name_label: version
+  db_hosted_zone: db.example.com
+  debug_logging: "true"
+  docker_image: hub.global.cloud.sap/monsoon/spilo:20180629092110
+  enable_master_load_balancer: "false"
+  enable_replica_load_balancer: "false"
+  enable_teams_api: "false"
+  master_dns_name_format: '{cluster}.{team}.staging.{hostedzone}'
+  pdb_name_format: postgres-{cluster}-pdb
+  pod_deletion_wait_timeout: 10m
+  pod_label_wait_timeout: 10m
+  pod_role_label: spilo-role
+  pod_service_account_name: postgres-operator
+  pod_terminate_grace_period: 5m
+  ready_wait_interval: 3s
+  ready_wait_timeout: 30s
+  replica_dns_name_format: '{cluster}-repl.{team}.staging.{hostedzone}'
+  replication_username: standby
+  resource_check_interval: 3s
+  resource_check_timeout: 10m
+  resync_period: 5m
+  ring_log_lines: "100"
+  secret_name_template: '{username}.{cluster}.credentials'
+  super_username: postgres
+  watched_namespace: '*'
+  workers: "4"
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2018-06-08T09:01:49Z
+  name: postgres-operator
+  namespace: postgres
+  resourceVersion: "925445143"
+  selfLink: /api/v1/namespaces/postgres/configmaps/postgres-operator
+  uid: 945fbaa6-6afa-11e8-82e0-3aa5d4c2ee5b

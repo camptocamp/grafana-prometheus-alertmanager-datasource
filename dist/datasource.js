@@ -68,7 +68,12 @@ System.register(["lodash"], function (_export, _context) {
                         // Format data for table panel
                         if (query.targets[0].type === "table") {
                             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-                            var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+
+                            var queryString = this.templateSrv.replace(query.targets[0].expr, options.scopedVars);
+                            if (queryString) {
+                                queryString = this.parseQuery(queryString);
+                            }
+                            var filter = encodeURIComponent(queryString || "");
                             return this.backendSrv.datasourceRequest({
                                 url: this.url + "/api/v1/alerts?silenced=" + this.silenced + "&inhibited=false&filter=" + filter,
                                 data: query,
@@ -156,9 +161,13 @@ System.register(["lodash"], function (_export, _context) {
                                 return results;
                             });
                         } else {
-                            var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+                            var _queryString = this.templateSrv.replace(query.targets[0].expr, options.scopedVars);
+                            if (_queryString) {
+                                _queryString = this.parseQuery(_queryString);
+                            }
+                            var _filter = encodeURIComponent(_queryString || "");
                             return this.backendSrv.datasourceRequest({
-                                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + _filter,
+                                url: this.url + "/api/v1/alerts?silenced=" + this.silenced + "&inhibited=false&filter=" + _filter,
                                 data: query,
                                 method: 'GET',
                                 headers: { 'Content-Type': 'application/json' }
@@ -168,6 +177,28 @@ System.register(["lodash"], function (_export, _context) {
                                 };
                             });
                         }
+                    }
+                }, {
+                    key: "parseQuery",
+                    value: function parseQuery(queryString) {
+                        var _this2 = this;
+
+                        var silencedRegex = /=(.*)/;
+                        var aQueries = queryString.split(",");
+                        aQueries = aQueries.filter(function (q) {
+                            if (q.includes("silenced")) {
+                                var r = silencedRegex.exec(q);
+                                if (r != null) {
+                                    _this2.silenced = r[1];
+                                }
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+                        queryString = aQueries.join(",");
+                        queryString = queryString.replace(/\s/g, "");
+                        return queryString;
                     }
                 }, {
                     key: "getColumns",
@@ -297,7 +328,7 @@ System.register(["lodash"], function (_export, _context) {
                 }, {
                     key: "buildQueryParameters",
                     value: function buildQueryParameters(options) {
-                        var _this2 = this;
+                        var _this3 = this;
 
                         //remove placeholder targets
                         options.targets = _.filter(options.targets, function (target) {
@@ -305,7 +336,7 @@ System.register(["lodash"], function (_export, _context) {
                         });
                         options.targetss = _.map(options.targets, function (target) {
                             return {
-                                target: _this2.templateSrv.replace(target.target),
+                                target: _this3.templateSrv.replace(target.target),
                                 expr: target.expr,
                                 refId: target.refId,
                                 hide: target.hide,

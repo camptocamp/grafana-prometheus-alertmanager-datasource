@@ -27,7 +27,12 @@ export class GenericDatasource {
         // Format data for table panel
         if(query.targets[0].type === "table"){
             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-            let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+
+            let queryString = this.templateSrv.replace(query.targets[0].expr, options.scopedVars);
+            if (queryString) {
+                queryString = this.parseQuery(queryString)
+            }
+            let filter = encodeURIComponent(queryString || "");
             return this.backendSrv.datasourceRequest({
                     url: `${this.url}/api/v1/alerts?silenced=${this.silenced}&inhibited=false&filter=${filter}`,
                     data: query,
@@ -74,9 +79,13 @@ export class GenericDatasource {
                 return results;
             });
         } else {
-            let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
-                return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+            let queryString = this.templateSrv.replace(query.targets[0].expr, options.scopedVars);
+            if (queryString) {
+                queryString = this.parseQuery(queryString)
+            }
+            let filter = encodeURIComponent(queryString || "");
+            return this.backendSrv.datasourceRequest({
+                url: `${this.url}/api/v1/alerts?silenced=${this.silenced}&inhibited=false&filter=${filter}`,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
@@ -86,6 +95,25 @@ export class GenericDatasource {
                 }
             });
         }
+    }
+
+    parseQuery(queryString) {
+        const silencedRegex = /=(.*)/;
+        let aQueries = queryString.split(",");
+        aQueries = aQueries.filter(q => {
+            if (q.includes("silenced")) {
+                let r = silencedRegex.exec(q);
+                if (r != null) {
+                    this.silenced = r[1];
+                }
+                return false;
+            } else {
+                return true
+            } 
+        });
+        queryString = aQueries.join(",")
+        queryString = queryString.replace(/\s/g, "");
+        return queryString;
     }
 
     getColumns(columnsDict) {

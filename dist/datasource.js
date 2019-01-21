@@ -11,6 +11,24 @@ System.register(["lodash"], function (_export, _context) {
     }
   }
 
+  function dsRegularEscape(value) {
+    if (typeof value === 'string') {
+      return value.replace(/'/g, "\\\\'");
+    }
+    return value;
+  }
+
+  _export("dsRegularEscape", dsRegularEscape);
+
+  function dsSpecialRegexEscape(value) {
+    if (typeof value === 'string') {
+      return dsRegularEscape(value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]+?.()]/g, '\\\\$&'));
+    }
+    return value;
+  }
+
+  _export("dsSpecialRegexEscape", dsSpecialRegexEscape);
+
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
@@ -76,7 +94,7 @@ System.register(["lodash"], function (_export, _context) {
             // Format data for table panel
             if (query.targets[0].type === "table") {
               var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
                 data: query,
@@ -164,7 +182,7 @@ System.register(["lodash"], function (_export, _context) {
                 return results;
               });
             } else {
-              var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+              var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + _filter,
                 data: query,
@@ -176,6 +194,16 @@ System.register(["lodash"], function (_export, _context) {
                 };
               });
             }
+          }
+        }, {
+          key: "interpolateQueryExpr",
+          value: function interpolateQueryExpr(value, variable, defaultFormatFn) {
+            if (typeof value === 'string') {
+              return dsSpecialRegexEscape(value);
+            }
+
+            var escapedValues = _.map(value, dsSpecialRegexEscape);
+            return escapedValues.join('|');
           }
         }, {
           key: "getColumns",

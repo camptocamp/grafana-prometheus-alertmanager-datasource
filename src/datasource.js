@@ -35,7 +35,7 @@ export class GenericDatasource {
     // Format data for table panel
     if(query.targets[0].type === "table"){
       var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,
@@ -79,7 +79,7 @@ export class GenericDatasource {
         return results;
       });
     } else {
-      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars) || "");
+      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,
@@ -91,6 +91,15 @@ export class GenericDatasource {
         }
       });
     }
+  }
+
+  interpolateQueryExpr(value, variable, defaultFormatFn) {
+    if (typeof value === 'string') {
+      return dsSpecialRegexEscape(value);
+    }
+
+    let escapedValues = _.map(value, dsSpecialRegexEscape);
+    return escapedValues.join('|');
   }
 
   getColumns(columnsDict) {
@@ -182,4 +191,19 @@ export class GenericDatasource {
       return "";
     });
   }
+
+
+}
+export function dsRegularEscape(value) {
+  if (typeof value === 'string') {
+    return value.replace(/'/g, "\\\\'");
+  }
+  return value;
+}
+
+export function dsSpecialRegexEscape(value) {
+  if (typeof value === 'string') {
+    return dsRegularEscape(value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]+?.()]/g, '\\\\$&'));
+  }
+  return value;
 }

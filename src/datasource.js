@@ -125,13 +125,17 @@ export class GenericDatasource {
   getColumnsDict(data, labelSelector) {
     let index = 1; // 0 is the data column
     let columnsDict = {};
+    let severityDefined = false;
     for (let i = 0; i < data.length; i++) {
       for (let labelIndex = 0; labelIndex < labelSelector.length; labelIndex++) {
         var selectedLabel = labelSelector[labelIndex];
         if (selectedLabel === "*") {
           // '*' maps to all labels/annotations not already added via the label selector list
           for (let label of Object.keys(data[i]['labels'])) {
-            if(!(label in columnsDict) && label !== 'severity') {
+            if(!(label in columnsDict)) {
+              if (label === 'severity') {
+                severityDefined = true
+              }
               columnsDict[label] = index++;
             }
           }
@@ -141,11 +145,16 @@ export class GenericDatasource {
             }
           }
         } else if (!(selectedLabel in columnsDict)) {
+          if (selectedLabel === 'severity') {
+            severityDefined = true
+          }
           columnsDict[selectedLabel] = index++;
         }
       }
     }
-    columnsDict['severity'] = index;
+    if (!severityDefined) {
+      columnsDict['severity'] = index++;
+    }
     return columnsDict;
   }
 

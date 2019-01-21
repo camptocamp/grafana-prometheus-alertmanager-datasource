@@ -252,6 +252,7 @@ System.register(["lodash"], function (_export, _context) {
           value: function getColumnsDict(data, labelSelector) {
             var index = 1; // 0 is the data column
             var columnsDict = {};
+            var severityDefined = false;
             for (var i = 0; i < data.length; i++) {
               for (var labelIndex = 0; labelIndex < labelSelector.length; labelIndex++) {
                 var selectedLabel = labelSelector[labelIndex];
@@ -265,7 +266,10 @@ System.register(["lodash"], function (_export, _context) {
                     for (var _iterator4 = Object.keys(data[i]['labels'])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
                       var label = _step4.value;
 
-                      if (!(label in columnsDict) && label !== 'severity') {
+                      if (!(label in columnsDict)) {
+                        if (label === 'severity') {
+                          severityDefined = true;
+                        }
                         columnsDict[label] = index++;
                       }
                     }
@@ -311,11 +315,16 @@ System.register(["lodash"], function (_export, _context) {
                     }
                   }
                 } else if (!(selectedLabel in columnsDict)) {
+                  if (selectedLabel === 'severity') {
+                    severityDefined = true;
+                  }
                   columnsDict[selectedLabel] = index++;
                 }
               }
             }
-            columnsDict['severity'] = index;
+            if (!severityDefined) {
+              columnsDict['severity'] = index++;
+            }
             return columnsDict;
           }
         }, {

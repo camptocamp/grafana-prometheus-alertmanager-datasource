@@ -41,14 +41,23 @@ System.register(["lodash"], function (_export, _context) {
           this.type = instanceSettings.type;
           this.url = instanceSettings.url;
           this.name = instanceSettings.name;
-          this.severityLevels = {};
-          this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()] = 4;
-          this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()] = 3;
-          this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()] = 2;
-          this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
           this.q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
+
+          this.severityLevels = {};
+          if (instanceSettings.jsonData.severity_critical != undefined) {
+            this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()] = 4;
+          }
+          if (instanceSettings.jsonData.severity_high != undefined) {
+            this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()] = 3;
+          }
+          if (instanceSettings.jsonData.severity_warning != undefined) {
+            this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()] = 2;
+          }
+          if (instanceSettings.jsonData.severity_info != undefined) {
+            this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
+          }
         }
 
         _createClass(GenericDatasource, [{
@@ -302,6 +311,7 @@ System.register(["lodash"], function (_export, _context) {
             options.targets = _.filter(options.targets, function (target) {
               return target.target !== 'select metric';
             });
+
             options.targetss = _.map(options.targets, function (target) {
               return {
                 target: _this2.templateSrv.replace(target.target),

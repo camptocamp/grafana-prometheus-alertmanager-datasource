@@ -6,14 +6,23 @@ export class GenericDatasource {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
-    this.severityLevels = {}
-    this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()]  = 4;
-    this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()]      = 3;
-    this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()]   = 2;
-    this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()]      = 1;
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
+
+    this.severityLevels = {}
+    if (instanceSettings.jsonData.severity_critical != undefined) {
+      this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()] = 4;
+    }
+    if (instanceSettings.jsonData.severity_high != undefined) {
+      this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()] = 3;
+    }
+    if (instanceSettings.jsonData.severity_warning != undefined) {
+      this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()] = 2;
+    }
+    if (instanceSettings.jsonData.severity_info != undefined) {
+      this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
+    }
   }
 
   query(options) {
@@ -147,6 +156,7 @@ export class GenericDatasource {
     options.targets = _.filter(options.targets, target => {
       return target.target !== 'select metric';
     });
+
     options.targetss = _.map(options.targets, target => {
       return {
         target: this.templateSrv.replace(target.target),

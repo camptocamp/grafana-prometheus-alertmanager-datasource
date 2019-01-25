@@ -1,3 +1,14 @@
+## 0.0.7 (Jan 25, 2019)
+
+- IMPROVEMENTS
+
+  * Allow undefined severity labels ([#44](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/44))
+  * Allow usage of multi-values variables ([#40](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/40))
+
+- BUGFIX
+
+  * Fix blank severity column ([#31](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/31))
+
 ## 0.0.6 (May 22, 2018)
 
   * Use Apache License 2.0

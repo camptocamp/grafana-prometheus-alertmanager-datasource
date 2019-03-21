@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-System.register(["lodash"], function (_export, _context) {
+System.register(['lodash'], function (_export, _context) {
   "use strict";
 
-  var _, _createClass, GenericDatasource;
+  var _, _typeof, _createClass, GenericDatasource;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -18,7 +18,7 @@ System.register(["lodash"], function (_export, _context) {
     return value;
   }
 
-  _export("dsRegularEscape", dsRegularEscape);
+  _export('dsRegularEscape', dsRegularEscape);
 
   function dsSpecialRegexEscape(value) {
     if (typeof value === 'string') {
@@ -27,13 +27,19 @@ System.register(["lodash"], function (_export, _context) {
     return value;
   }
 
-  _export("dsSpecialRegexEscape", dsSpecialRegexEscape);
+  _export('dsSpecialRegexEscape', dsSpecialRegexEscape);
 
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
     }],
     execute: function () {
+      _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+      } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+
       _createClass = function () {
         function defineProperties(target, props) {
           for (var i = 0; i < props.length; i++) {
@@ -52,7 +58,7 @@ System.register(["lodash"], function (_export, _context) {
         };
       }();
 
-      _export("GenericDatasource", GenericDatasource = function () {
+      _export('GenericDatasource', GenericDatasource = function () {
         function GenericDatasource(instanceSettings, $q, backendSrv, templateSrv) {
           _classCallCheck(this, GenericDatasource);
 
@@ -79,7 +85,65 @@ System.register(["lodash"], function (_export, _context) {
         }
 
         _createClass(GenericDatasource, [{
-          key: "query",
+          key: 'metricFindQuery',
+          value: function metricFindQuery(query) {
+            var matchedFunction = {};
+            if (query) {
+              var queryTypes = [{
+                type: 'names',
+                regex: /^(label|annotation)_names\((.*?)\)\s*$/
+              }, {
+                type: 'values',
+                regex: /^(label|annotation)_values\((?:(.+),\s*)?([a-zA-Z_][a-zA-Z0-9_]*)\)\s*$/
+              }, {
+                type: 'key',
+                regex: /^(labels|annotations|receivers|generatorURL)\((.*?)\)\s*$/
+              }];
+              for (var i = 0; i < queryTypes.length; i++) {
+                queryTypes[i].matches = query.match(queryTypes[i].regex);
+                if (queryTypes[i].matches) {
+                  matchedFunction = queryTypes[i];
+                  break;
+                }
+              }
+              if (matchedFunction.type) {
+                query = matchedFunction[2] || '';
+              }
+              if (query) {
+                query = encodeURIComponent(this.templateSrv.replace(query, {}, this.interpolateQueryExpr) || "");
+              }
+            }
+            var unique = new Set();
+            var results = [];
+            return this.backendSrv.datasourceRequest({
+              url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + query,
+              method: 'GET'
+            }).then(function (response) {
+              response.data.data.forEach(function (value) {
+                if (matchedFunction.type === 'key') {
+                  value = value[matchedFunction.matches[1]];
+                } else if (matchedFunction.type === 'names') {
+                  value = Object.keys(value[matchedFunction.matches[1] + 's']);
+                } else if (matchedFunction.type === 'values') {
+                  value = value[matchedFunction.matches[1] + 's'][matchedFunction.matches[3]];
+                }
+                _.castArray(value).forEach(function (v) {
+                  if (v) {
+                    if ((typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object') {
+                      v = JSON.stringify(v);
+                    }
+                    if (!unique.has(v)) {
+                      unique.add(v);
+                      results.push({ text: v });
+                    }
+                  }
+                });
+              });
+              return results;
+            });
+          }
+        }, {
+          key: 'query',
           value: function query(options) {
             var _this = this;
 
@@ -87,14 +151,13 @@ System.register(["lodash"], function (_export, _context) {
             query.targets = query.targets.filter(function (t) {
               return !t.hide;
             });
-
             if (query.targets.length <= 0) {
               return this.q.when({ data: [] });
             }
+            var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
             // Format data for table panel
             if (query.targets[0].type === "table") {
               var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-              var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
                 data: query,
@@ -182,9 +245,8 @@ System.register(["lodash"], function (_export, _context) {
                 return results;
               });
             } else {
-              var _filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + _filter,
+                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
                 data: query,
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
@@ -196,7 +258,7 @@ System.register(["lodash"], function (_export, _context) {
             }
           }
         }, {
-          key: "interpolateQueryExpr",
+          key: 'interpolateQueryExpr',
           value: function interpolateQueryExpr(value, variable, defaultFormatFn) {
             if (typeof value === 'string') {
               return dsSpecialRegexEscape(value);
@@ -206,7 +268,7 @@ System.register(["lodash"], function (_export, _context) {
             return escapedValues.join('|');
           }
         }, {
-          key: "getColumns",
+          key: 'getColumns',
           value: function getColumns(columnsDict) {
             var columns = [{ text: "Time", type: "time" }];
             var _iteratorNormalCompletion3 = true;
@@ -237,7 +299,7 @@ System.register(["lodash"], function (_export, _context) {
             return columns;
           }
         }, {
-          key: "parseLabelSelector",
+          key: 'parseLabelSelector',
           value: function parseLabelSelector(input) {
             var map;
             if (typeof input === "undefined" || input.trim().length === 0) {
@@ -248,7 +310,7 @@ System.register(["lodash"], function (_export, _context) {
             return map;
           }
         }, {
-          key: "getColumnsDict",
+          key: 'getColumnsDict',
           value: function getColumnsDict(data, labelSelector) {
             var index = 1; // 0 is the data column
             var columnsDict = {};
@@ -328,7 +390,7 @@ System.register(["lodash"], function (_export, _context) {
             return columnsDict;
           }
         }, {
-          key: "testDatasource",
+          key: 'testDatasource',
           value: function testDatasource() {
             return this.backendSrv.datasourceRequest({
               url: this.url + '/api/v1/status',
@@ -340,7 +402,7 @@ System.register(["lodash"], function (_export, _context) {
             });
           }
         }, {
-          key: "buildQueryParameters",
+          key: 'buildQueryParameters',
           value: function buildQueryParameters(options) {
             var _this2 = this;
 
@@ -362,7 +424,7 @@ System.register(["lodash"], function (_export, _context) {
             return options;
           }
         }, {
-          key: "formatInstanceText",
+          key: 'formatInstanceText',
           value: function formatInstanceText(labels, legendFormat) {
             if (legendFormat === "") {
               return JSON.stringify(labels);
@@ -380,7 +442,7 @@ System.register(["lodash"], function (_export, _context) {
         return GenericDatasource;
       }());
 
-      _export("GenericDatasource", GenericDatasource);
+      _export('GenericDatasource', GenericDatasource);
     }
   };
 });

@@ -24,18 +24,76 @@ export class GenericDatasource {
       this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
     }
   }
-
+  metricFindQuery(query) {
+    let matchedFunction = {};
+    if(query) {
+      const queryTypes = [
+        {
+          type: 'names',
+          regex: /^(label|annotation)_names\((.*?)\)\s*$/
+        },
+        {
+          type: 'values',
+          regex: /^(label|annotation)_values\((?:(.+),\s*)?([a-zA-Z_][a-zA-Z0-9_]*)\)\s*$/
+        },
+        {
+          type: 'key',
+          regex: /^(labels|annotations|receivers|generatorURL)\((.*?)\)\s*$/
+        }
+      ]
+      for (let i = 0; i < queryTypes.length; i++) {
+        queryTypes[i].matches = query.match(queryTypes[i].regex)
+        if (queryTypes[i].matches) {
+          matchedFunction = queryTypes[i];
+          break;
+        }
+      }
+      if (matchedFunction.type) {
+        query = matchedFunction[2] || ''
+      }
+      if(query) {
+        query = encodeURIComponent(this.templateSrv.replace(query, {}, this.interpolateQueryExpr) || "");
+      }
+    }
+    let unique = new Set();
+    let results = []
+    return this.backendSrv.datasourceRequest({
+      url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+query,
+      method: 'GET'
+    }).then(response => {
+      response.data.data.forEach(value => {
+        if(matchedFunction.type === 'key'){
+            value = value[matchedFunction.matches[1]];
+        }else if (matchedFunction.type === 'names') {
+            value = Object.keys(value[matchedFunction.matches[1] + 's'])
+        }else if (matchedFunction.type === 'values') {
+            value = value[matchedFunction.matches[1] + 's'][matchedFunction.matches[3]];
+        }
+        _.castArray(value).forEach( v => {
+            if(v) {
+                if(typeof v === 'object'){
+                    v=JSON.stringify(v);
+                }
+                if (!unique.has(v)) {
+                    unique.add(v)
+                    results.push({text: v})
+                }
+            }
+        })
+      })
+      return results;
+    });
+  }
   query(options) {
     let query = this.buildQueryParameters(options);
     query.targets = query.targets.filter(t => !t.hide);
-
     if (query.targets.length <= 0) {
       return this.q.when({data: []});
     }
+    let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
     // Format data for table panel
     if(query.targets[0].type === "table"){
       var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
-      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,
@@ -79,7 +137,6 @@ export class GenericDatasource {
         return results;
       });
     } else {
-      let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
         data: query,

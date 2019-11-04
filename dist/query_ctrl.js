@@ -74,6 +74,9 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
           _this.target.expr = _this.target.expr || '';
           _this.target.legendFormat = _this.target.legendFormat || '';
           _this.target.labelSelector = _this.target.labelSelector || '*';
+          _this.target.queryActive = _this.target.queryActive || true;
+          _this.target.querySilenced = _this.target.querySilenced || false;
+          _this.target.queryInhibited = _this.target.queryInhibited || false;
           return _this;
         }
 

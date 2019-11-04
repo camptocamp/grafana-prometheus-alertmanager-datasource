@@ -85,6 +85,22 @@ System.register(['lodash'], function (_export, _context) {
         }
 
         _createClass(GenericDatasource, [{
+          key: 'createUrl',
+          value: function createUrl(targetData) {
+            var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            var active = targetData.queryActive ? 'true' : 'false';
+            var silenced = targetData.querySilenced ? 'true' : 'false';
+            var inhibited = targetData.queryInhibited ? 'true' : 'false';
+            var url = this.url + '/api/v2/alerts?active=' + active + '&silenced=' + silenced + '&inhibited=' + inhibited;
+
+            if (filter !== undefined && filter !== '') {
+              url += '&filter=' + filter;
+            }
+
+            return url;
+          }
+        }, {
           key: 'metricFindQuery',
           value: function metricFindQuery(query) {
             var matchedFunction = {};
@@ -116,10 +132,10 @@ System.register(['lodash'], function (_export, _context) {
             var unique = new Set();
             var results = [];
             return this.backendSrv.datasourceRequest({
-              url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + query,
+              url: this.createUrl(query),
               method: 'GET'
             }).then(function (response) {
-              response.data.data.forEach(function (value) {
+              response.data.forEach(function (value) {
                 if (matchedFunction.type === 'key') {
                   value = value[matchedFunction.matches[1]];
                 } else if (matchedFunction.type === 'names') {
@@ -155,12 +171,15 @@ System.register(['lodash'], function (_export, _context) {
               return this.q.when({ data: [] });
             }
             var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
+            var url = this.createUrl(query.targets[0], filter);
             // Format data for table panel
             if (query.targets[0].type === "table") {
               var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
-                method: 'GET'
+                url: url,
+                data: query,
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
               }).then(function (response) {
                 var results = {
                   "data": [{
@@ -170,13 +189,13 @@ System.register(['lodash'], function (_export, _context) {
                   }]
                 };
 
-                if (response.data && response.data.data && response.data.data.length) {
-                  var columnsDict = _this.getColumnsDict(response.data.data, labelSelector);
+                if (response.data && response.data && response.data.length) {
+                  var columnsDict = _this.getColumnsDict(response.data, labelSelector);
                   results.data[0].columns = _this.getColumns(columnsDict);
 
-                  for (var i = 0; i < response.data.data.length; i++) {
+                  for (var i = 0; i < response.data.length; i++) {
                     var row = new Array(results.data[0].columns.length).fill("");
-                    var item = response.data.data[i];
+                    var item = response.data[i];
                     row[0] = [Date.parse(item['startsAt'])];
 
                     var _iteratorNormalCompletion = true;
@@ -244,11 +263,13 @@ System.register(['lodash'], function (_export, _context) {
               });
             } else {
               return this.backendSrv.datasourceRequest({
-                url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
-                method: 'GET'
+                url: url,
+                data: query,
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
               }).then(function (response) {
                 return {
-                  "data": [{ "datapoints": [[response.data.data.length, Date.now()]] }]
+                  "data": [{ "datapoints": [[response.data.length, Date.now()]] }]
                 };
               });
             }
@@ -389,7 +410,7 @@ System.register(['lodash'], function (_export, _context) {
           key: 'testDatasource',
           value: function testDatasource() {
             return this.backendSrv.datasourceRequest({
-              url: this.url + '/api/v1/status',
+              url: this.url + '/api/v2/status',
               method: 'GET'
             }).then(function (response) {
               if (response.status === 200) {

@@ -14,6 +14,9 @@ constructor($scope, $injector, uiSegmentSrv)  {
   this.target.expr = this.target.expr || '';
   this.target.legendFormat = this.target.legendFormat || '';
   this.target.labelSelector = this.target.labelSelector || '*';
+  this.target.queryActive = this.target.queryActive || true;
+  this.target.querySilenced = this.target.querySilenced || false;
+  this.target.queryInhibited = this.target.queryInhibited || false;
 }
 
 getOptions(query) {

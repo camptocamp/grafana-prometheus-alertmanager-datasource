@@ -24,6 +24,18 @@ export class GenericDatasource {
       this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
     }
   }
+  createUrl(targetData, filter = undefined) {
+    const active = targetData.queryActive ? 'true' : 'false';
+    const silenced = targetData.querySilenced ? 'true' : 'false';
+    const inhibited = targetData.queryInhibited ? 'true' : 'false';
+    let url = `${this.url}/api/v2/alerts?active=${active}&silenced=${silenced}&inhibited=${inhibited}`;
+
+    if (filter !== undefined && filter !== '') {
+      url += '&filter=' + filter;
+    }
+
+    return url;
+  }
   metricFindQuery(query) {
     let matchedFunction = {};
     if(query) {
@@ -58,10 +70,10 @@ export class GenericDatasource {
     let unique = new Set();
     let results = []
     return this.backendSrv.datasourceRequest({
-      url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+query,
+      url: this.createUrl(query),
       method: 'GET'
     }).then(response => {
-      response.data.data.forEach(value => {
+      response.data.forEach(value => {
         if(matchedFunction.type === 'key'){
             value = value[matchedFunction.matches[1]];
         }else if (matchedFunction.type === 'names') {
@@ -91,11 +103,12 @@ export class GenericDatasource {
       return this.q.when({data: []});
     }
     let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
+    let url = this.createUrl(query.targets[0], filter);
     // Format data for table panel
     if(query.targets[0].type === "table"){
       var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
       return this.backendSrv.datasourceRequest({
-        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+        url: url,
         method: 'GET',
       }).then(response => {
         let results = {
@@ -106,13 +119,13 @@ export class GenericDatasource {
           }]
         };
 
-        if(response.data && response.data.data && response.data.data.length) {
-          let columnsDict = this.getColumnsDict(response.data.data, labelSelector);
+        if(response.data && response.data && response.data.length) {
+          let columnsDict = this.getColumnsDict(response.data, labelSelector);
           results.data[0].columns = this.getColumns(columnsDict);
 
-          for (let i = 0; i < response.data.data.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             let row = new Array(results.data[0].columns.length).fill("");
-            let item = response.data.data[i];
+            let item = response.data[i];
             row[0] = [Date.parse(item['startsAt'])];
 
             for (let label of Object.keys(item['labels'])) {
@@ -136,11 +149,11 @@ export class GenericDatasource {
       });
     } else {
       return this.backendSrv.datasourceRequest({
-        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+        url: url,
         method: 'GET',
       }).then(response => {
         return {
-          "data": [{ "datapoints": [ [response.data.data.length, Date.now()] ]}]
+          "data": [{ "datapoints": [ [response.data.length, Date.now()] ]}]
         }
       });
     }
@@ -213,7 +226,7 @@ export class GenericDatasource {
 
   testDatasource() {
     return this.backendSrv.datasourceRequest({
-      url: this.url + '/api/v1/status',
+      url: this.url + '/api/v2/status',
       method: 'GET'
     }).then(response => {
       if (response.status === 200) {

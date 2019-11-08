@@ -68,19 +68,24 @@ System.register(['lodash'], function (_export, _context) {
           this.q = $q;
           this.backendSrv = backendSrv;
           this.templateSrv = templateSrv;
+          this.severityLabelName = 'severity';
 
           this.severityLevels = {};
           if (instanceSettings.jsonData.severity_critical != undefined) {
-            this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()] = 4;
+            this.severityLevels[instanceSettings.jsonData.severity_critical] = 4;
           }
           if (instanceSettings.jsonData.severity_high != undefined) {
-            this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()] = 3;
+            this.severityLevels[instanceSettings.jsonData.severity_high] = 3;
           }
           if (instanceSettings.jsonData.severity_warning != undefined) {
-            this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()] = 2;
+            this.severityLevels[instanceSettings.jsonData.severity_warning] = 2;
           }
           if (instanceSettings.jsonData.severity_info != undefined) {
-            this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
+            this.severityLevels[instanceSettings.jsonData.severity_info] = 1;
+          }
+
+          if (instanceSettings.jsonData.severity_label_name != undefined) {
+            this.severityLabelName = instanceSettings.jsonData.severity_label_name;
           }
         }
 
@@ -190,7 +195,7 @@ System.register(['lodash'], function (_export, _context) {
                         var label = _step.value;
 
                         if (label in columnsDict) {
-                          if (label === 'severity') {
+                          if (label === _this.severityLabelName) {
                             row[columnsDict[label]] = _this.severityLevels[item['labels'][label]];
                           } else {
                             row[columnsDict[label]] = item['labels'][label];
@@ -329,7 +334,7 @@ System.register(['lodash'], function (_export, _context) {
                       var label = _step4.value;
 
                       if (!(label in columnsDict)) {
-                        if (label === 'severity') {
+                        if (label === this.severityLabelName) {
                           severityDefined = true;
                         }
                         columnsDict[label] = index++;
@@ -377,7 +382,7 @@ System.register(['lodash'], function (_export, _context) {
                     }
                   }
                 } else if (!(selectedLabel in columnsDict)) {
-                  if (selectedLabel === 'severity') {
+                  if (selectedLabel === this.severityLabelName) {
                     severityDefined = true;
                   }
                   columnsDict[selectedLabel] = index++;
@@ -385,7 +390,7 @@ System.register(['lodash'], function (_export, _context) {
               }
             }
             if (!severityDefined) {
-              columnsDict['severity'] = index++;
+              columnsDict[this.severityLabelName] = index++;
             }
             return columnsDict;
           }

@@ -9,24 +9,29 @@ export class GenericDatasource {
     this.q = $q;
     this.backendSrv = backendSrv;
     this.templateSrv = templateSrv;
+    this.severityLabelName = 'severity';
 
     this.severityLevels = {}
     if (instanceSettings.jsonData.severity_critical != undefined) {
-      this.severityLevels[instanceSettings.jsonData.severity_critical.toLowerCase()] = 4;
+      this.severityLevels[instanceSettings.jsonData.severity_critical] = 4;
     }
     if (instanceSettings.jsonData.severity_high != undefined) {
-      this.severityLevels[instanceSettings.jsonData.severity_high.toLowerCase()] = 3;
+      this.severityLevels[instanceSettings.jsonData.severity_high] = 3;
     }
     if (instanceSettings.jsonData.severity_warning != undefined) {
-      this.severityLevels[instanceSettings.jsonData.severity_warning.toLowerCase()] = 2;
+      this.severityLevels[instanceSettings.jsonData.severity_warning] = 2;
     }
     if (instanceSettings.jsonData.severity_info != undefined) {
-      this.severityLevels[instanceSettings.jsonData.severity_info.toLowerCase()] = 1;
+      this.severityLevels[instanceSettings.jsonData.severity_info] = 1;
+    }
+
+    if (instanceSettings.jsonData.severity_label_name != undefined) {
+      this.severityLabelName = instanceSettings.jsonData.severity_label_name;
     }
   }
   metricFindQuery(query) {
     let matchedFunction = {};
-    if(query) {
+    if (query) {
       const queryTypes = [
         {
           type: 'names',
@@ -51,34 +56,34 @@ export class GenericDatasource {
       if (matchedFunction.type) {
         query = matchedFunction[2] || ''
       }
-      if(query) {
+      if (query) {
         query = encodeURIComponent(this.templateSrv.replace(query, {}, this.interpolateQueryExpr) || "");
       }
     }
     let unique = new Set();
     let results = []
     return this.backendSrv.datasourceRequest({
-      url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+query,
+      url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + query,
       method: 'GET'
     }).then(response => {
       response.data.data.forEach(value => {
-        if(matchedFunction.type === 'key'){
-            value = value[matchedFunction.matches[1]];
-        }else if (matchedFunction.type === 'names') {
-            value = Object.keys(value[matchedFunction.matches[1] + 's'])
-        }else if (matchedFunction.type === 'values') {
-            value = value[matchedFunction.matches[1] + 's'][matchedFunction.matches[3]];
+        if (matchedFunction.type === 'key') {
+          value = value[matchedFunction.matches[1]];
+        } else if (matchedFunction.type === 'names') {
+          value = Object.keys(value[matchedFunction.matches[1] + 's'])
+        } else if (matchedFunction.type === 'values') {
+          value = value[matchedFunction.matches[1] + 's'][matchedFunction.matches[3]];
         }
-        _.castArray(value).forEach( v => {
-            if(v) {
-                if(typeof v === 'object'){
-                    v=JSON.stringify(v);
-                }
-                if (!unique.has(v)) {
-                    unique.add(v)
-                    results.push({text: v})
-                }
+        _.castArray(value).forEach(v => {
+          if (v) {
+            if (typeof v === 'object') {
+              v = JSON.stringify(v);
             }
+            if (!unique.has(v)) {
+              unique.add(v)
+              results.push({ text: v })
+            }
+          }
         })
       })
       return results;
@@ -88,14 +93,14 @@ export class GenericDatasource {
     let query = this.buildQueryParameters(options);
     query.targets = query.targets.filter(t => !t.hide);
     if (query.targets.length <= 0) {
-      return this.q.when({data: []});
+      return this.q.when({ data: [] });
     }
     let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
     // Format data for table panel
-    if(query.targets[0].type === "table"){
+    if (query.targets[0].type === "table") {
       var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
       return this.backendSrv.datasourceRequest({
-        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
         data: query,
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -108,7 +113,7 @@ export class GenericDatasource {
           }]
         };
 
-        if(response.data && response.data.data && response.data.data.length) {
+        if (response.data && response.data.data && response.data.data.length) {
           let columnsDict = this.getColumnsDict(response.data.data, labelSelector);
           results.data[0].columns = this.getColumns(columnsDict);
 
@@ -118,8 +123,8 @@ export class GenericDatasource {
             row[0] = [Date.parse(item['startsAt'])];
 
             for (let label of Object.keys(item['labels'])) {
-              if(label in columnsDict) {
-                if(label === 'severity') {
+              if (label in columnsDict) {
+                if (label === this.severityLabelName) {
                   row[columnsDict[label]] = this.severityLevels[item['labels'][label]]
                 } else {
                   row[columnsDict[label]] = item['labels'][label];
@@ -127,7 +132,7 @@ export class GenericDatasource {
               }
             }
             for (let annotation of Object.keys(item['annotations'])) {
-              if(annotation in columnsDict) {
+              if (annotation in columnsDict) {
                 row[columnsDict[annotation]] = item['annotations'][annotation];
               }
             }
@@ -138,13 +143,13 @@ export class GenericDatasource {
       });
     } else {
       return this.backendSrv.datasourceRequest({
-        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
+        url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
         data: query,
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       }).then(response => {
         return {
-          "data": [{ "datapoints": [ [response.data.data.length, Date.now()] ]}]
+          "data": [{ "datapoints": [[response.data.data.length, Date.now()]] }]
         }
       });
     }
@@ -160,8 +165,8 @@ export class GenericDatasource {
   }
 
   getColumns(columnsDict) {
-    let columns =  [{ text: "Time", type: "time" }];
-    for(let column of Object.keys(columnsDict)) {
+    let columns = [{ text: "Time", type: "time" }];
+    for (let column of Object.keys(columnsDict)) {
       columns.push({ text: column, type: "string" })
     }
     return columns;
@@ -170,7 +175,7 @@ export class GenericDatasource {
   // Parses the label list into a map
   parseLabelSelector(input) {
     var map;
-    if (typeof(input) === "undefined" || input.trim().length === 0) {
+    if (typeof (input) === "undefined" || input.trim().length === 0) {
       map = ["*"];
     } else {
       map = input.trim().split(/\s*,\s*/);
@@ -189,20 +194,20 @@ export class GenericDatasource {
         if (selectedLabel === "*") {
           // '*' maps to all labels/annotations not already added via the label selector list
           for (let label of Object.keys(data[i]['labels'])) {
-            if(!(label in columnsDict)) {
-              if (label === 'severity') {
+            if (!(label in columnsDict)) {
+              if (label === this.severityLabelName) {
                 severityDefined = true
               }
               columnsDict[label] = index++;
             }
           }
           for (let annotation of Object.keys(data[i]['annotations'])) {
-            if(!(annotation in columnsDict)) {
+            if (!(annotation in columnsDict)) {
               columnsDict[annotation] = index++;
             }
           }
         } else if (!(selectedLabel in columnsDict)) {
-          if (selectedLabel === 'severity') {
+          if (selectedLabel === this.severityLabelName) {
             severityDefined = true
           }
           columnsDict[selectedLabel] = index++;
@@ -210,7 +215,7 @@ export class GenericDatasource {
       }
     }
     if (!severityDefined) {
-      columnsDict['severity'] = index++;
+      columnsDict[this.severityLabelName] = index++;
     }
     return columnsDict;
   }
@@ -245,12 +250,12 @@ export class GenericDatasource {
     return options;
   }
 
-  formatInstanceText(labels, legendFormat){
-    if(legendFormat === ""){
+  formatInstanceText(labels, legendFormat) {
+    if (legendFormat === "") {
       return JSON.stringify(labels);
     }
     let aliasRegex = /\{\{\s*(.+?)\s*\}\}/g;
-    return legendFormat.replace(aliasRegex, function(match, g1) {
+    return legendFormat.replace(aliasRegex, function (match, g1) {
       if (labels[g1]) {
         return labels[g1];
       }

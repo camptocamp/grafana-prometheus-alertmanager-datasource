@@ -9,6 +9,7 @@ export class GenericDatasource {
         this.q = $q;
         this.backendSrv = backendSrv;
         this.templateSrv = templateSrv;
+        this.withCredentials = instanceSettings.withCredentials;
 
         this.severityLevels = {};
         if (instanceSettings.jsonData.severity_critical != undefined) {
@@ -79,7 +80,9 @@ export class GenericDatasource {
         };
         return this.backendSrv.datasourceRequest({
             url: this.createUrl(defaultTargetData),
-            method: 'GET'
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: this.withCredentials
         }).then(response => {
             response.data.forEach(value => {
                 if (matchedFunction.type === 'key') {
@@ -118,6 +121,8 @@ export class GenericDatasource {
             return this.backendSrv.datasourceRequest({
                 url: url,
                 method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: this.withCredentials
             }).then(response => {
                 let results = {
                     "data": [{
@@ -159,6 +164,8 @@ export class GenericDatasource {
             return this.backendSrv.datasourceRequest({
                 url: url,
                 method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: this.withCredentials
             }).then(response => {
                 return {
                     "data": [{"datapoints": [[response.data.length, Date.now()]]}]
@@ -235,7 +242,8 @@ export class GenericDatasource {
     testDatasource() {
         return this.backendSrv.datasourceRequest({
             url: this.url + '/api/v2/status',
-            method: 'GET'
+            method: 'GET',
+            withCredentials: this.withCredentials
         }).then(response => {
             if (response.status === 200) {
                 return {status: "success", message: "Data source is working", title: "Success"};

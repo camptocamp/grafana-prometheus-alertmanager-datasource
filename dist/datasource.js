@@ -3,7 +3,19 @@
 System.register(['lodash'], function (_export, _context) {
     "use strict";
 
-    var _, _typeof, _createClass, GenericDatasource;
+    var _, _extends, _typeof, _createClass, GenericDatasource;
+
+    function _objectWithoutProperties(obj, keys) {
+        var target = {};
+
+        for (var i in obj) {
+            if (keys.indexOf(i) >= 0) continue;
+            if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+            target[i] = obj[i];
+        }
+
+        return target;
+    }
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -34,6 +46,20 @@ System.register(['lodash'], function (_export, _context) {
             _ = _lodash.default;
         }],
         execute: function () {
+            _extends = Object.assign || function (target) {
+                for (var i = 1; i < arguments.length; i++) {
+                    var source = arguments[i];
+
+                    for (var key in source) {
+                        if (Object.prototype.hasOwnProperty.call(source, key)) {
+                            target[key] = source[key];
+                        }
+                    }
+                }
+
+                return target;
+            };
+
             _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
                 return typeof obj;
             } : function (obj) {
@@ -86,16 +112,22 @@ System.register(['lodash'], function (_export, _context) {
 
                 _createClass(GenericDatasource, [{
                     key: 'createUrl',
-                    value: function createUrl(targetData) {
-                        var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+                    value: function createUrl(_ref) {
+                        var queryActive = _ref.queryActive,
+                            querySilenced = _ref.querySilenced,
+                            queryInhibited = _ref.queryInhibited,
+                            _ref$expr = _ref.expr,
+                            expr = _ref$expr === undefined ? [] : _ref$expr;
 
-                        var active = targetData.queryActive ? 'true' : 'false';
-                        var silenced = targetData.querySilenced ? 'true' : 'false';
-                        var inhibited = targetData.queryInhibited ? 'true' : 'false';
+                        var active = queryActive ? 'true' : 'false';
+                        var silenced = querySilenced ? 'true' : 'false';
+                        var inhibited = queryInhibited ? 'true' : 'false';
                         var url = this.url + '/api/v2/alerts?active=' + active + '&silenced=' + silenced + '&inhibited=' + inhibited;
 
-                        if (filter !== undefined && filter !== '') {
-                            url += '&filter=' + filter;
+                        if (expr !== undefined && expr.length > 0) {
+                            url += expr.map(function (x) {
+                                return '&filter=' + x;
+                            }).join('');
                         }
 
                         return url;
@@ -134,10 +166,11 @@ System.register(['lodash'], function (_export, _context) {
                         var defaultTargetData = {
                             queryActive: true,
                             querySilenced: false,
-                            queryInhibited: false
+                            queryInhibited: false,
+                            expr: query
                         };
                         return this.backendSrv.datasourceRequest({
-                            url: this.createUrl(defaultTargetData, query),
+                            url: this.createUrl(defaultTargetData),
                             method: 'GET'
                         }).then(function (response) {
                             response.data.forEach(function (value) {
@@ -175,8 +208,7 @@ System.register(['lodash'], function (_export, _context) {
                         if (query.targets.length <= 0) {
                             return this.q.when({ data: [] });
                         }
-                        var filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
-                        var url = this.createUrl(query.targets[0], filter);
+                        var url = this.createUrl(query.targets[0]);
                         // Format data for table panel
                         if (query.targets[0].type === "table") {
                             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
@@ -433,15 +465,27 @@ System.register(['lodash'], function (_export, _context) {
                             return target.target !== 'select metric';
                         });
 
-                        options.targetss = _.map(options.targets, function (target) {
-                            return {
-                                target: _this2.templateSrv.replace(target.target),
-                                expr: target.expr,
-                                refId: target.refId,
-                                hide: target.hide,
-                                type: target.type || 'single',
-                                legendFormat: target.legendFormat || ""
-                            };
+                        options.targets = _.map(options.targets, function (_ref2) {
+                            var target = _ref2.target,
+                                expr = _ref2.expr,
+                                _ref2$type = _ref2.type,
+                                type = _ref2$type === undefined ? 'single' : _ref2$type,
+                                _ref2$legendFormat = _ref2.legendFormat,
+                                legendFormat = _ref2$legendFormat === undefined ? '' : _ref2$legendFormat,
+                                props = _objectWithoutProperties(_ref2, ['target', 'expr', 'type', 'legendFormat']);
+
+                            var exprArray = expr.split(/[;,.\n ]/).filter(function (x) {
+                                return x.length > 0;
+                            }).map(function (x) {
+                                return _this2.templateSrv.replace(x, {}, 'pipe');
+                            });
+
+                            return _extends({}, props, {
+                                type: type,
+                                legendFormat: legendFormat,
+                                target: _this2.templateSrv.replace(target),
+                                expr: exprArray
+                            });
                         });
                         return options;
                     }

@@ -25,14 +25,14 @@ export class GenericDatasource {
         }
     }
 
-    createUrl(targetData, filter = undefined) {
-        const active = targetData.queryActive ? 'true' : 'false';
-        const silenced = targetData.querySilenced ? 'true' : 'false';
-        const inhibited = targetData.queryInhibited ? 'true' : 'false';
+    createUrl({queryActive, querySilenced, queryInhibited, expr = []}) {
+        const active = queryActive ? 'true' : 'false';
+        const silenced = querySilenced ? 'true' : 'false';
+        const inhibited = queryInhibited ? 'true' : 'false';
         let url = `${this.url}/api/v2/alerts?active=${active}&silenced=${silenced}&inhibited=${inhibited}`;
 
-        if (filter !== undefined && filter !== '') {
-            url += '&filter=' + filter;
+        if (expr !== undefined && expr.length > 0) {
+            url += expr.map(x => `&filter=${x}`).join('');
         }
 
         return url;
@@ -74,10 +74,11 @@ export class GenericDatasource {
         const defaultTargetData = {
             queryActive: true,
             querySilenced: false,
-            queryInhibited: false
+            queryInhibited: false,
+            expr: query
         };
         return this.backendSrv.datasourceRequest({
-            url: this.createUrl(defaultTargetData, query),
+            url: this.createUrl(defaultTargetData),
             method: 'GET'
         }).then(response => {
             response.data.forEach(value => {
@@ -110,8 +111,7 @@ export class GenericDatasource {
         if (query.targets.length <= 0) {
             return this.q.when({data: []});
         }
-        let filter = encodeURIComponent(this.templateSrv.replace(query.targets[0].expr, options.scopedVars, this.interpolateQueryExpr) || "");
-        let url = this.createUrl(query.targets[0], filter);
+        let url = this.createUrl(query.targets[0]);
         // Format data for table panel
         if (query.targets[0].type === "table") {
             let labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
@@ -249,14 +249,15 @@ export class GenericDatasource {
             return target.target !== 'select metric';
         });
 
-        options.targetss = _.map(options.targets, target => {
+        options.targets = _.map(options.targets, ({target, expr, type = 'single', legendFormat = '', ...props}) => {
+            let exprArray = expr.split(/[;,.\n ]/).filter(x => x.length > 0).map(x => this.templateSrv.replace(x, {}, 'pipe'));
+
             return {
-                target: this.templateSrv.replace(target.target),
-                expr: target.expr,
-                refId: target.refId,
-                hide: target.hide,
-                type: target.type || 'single',
-                legendFormat: target.legendFormat || ""
+                ...props,
+                type,
+                legendFormat,
+                target: this.templateSrv.replace(target),
+                expr: exprArray
             };
         });
         return options;

@@ -38,7 +38,7 @@ module.exports = function(grunt) {
       },
       dist: {
         options: {
-          plugins: ['transform-es2015-modules-systemjs', 'transform-es2015-for-of']
+          plugins: ['transform-object-rest-spread', 'transform-es2015-modules-systemjs', 'transform-es2015-for-of']
         },
         files: [{
           cwd: 'src',
@@ -49,6 +49,9 @@ module.exports = function(grunt) {
         }]
       },
       distTestNoSystemJs: {
+        options: {
+          plugins: ['transform-object-rest-spread', 'transform-es2015-modules-systemjs', 'transform-es2015-for-of']
+        },
         files: [{
           cwd: 'src',
           expand: true,
@@ -58,6 +61,9 @@ module.exports = function(grunt) {
         }]
       },
       distTestsSpecsNoSystemJs: {
+        options: {
+          plugins: ['transform-object-rest-spread', 'transform-es2015-modules-systemjs', 'transform-es2015-for-of']
+        },
         files: [{
           expand: true,
           cwd: 'spec',

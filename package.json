@@ -37,7 +37,9 @@
     "jsdom": "~9.12.0",
     "load-grunt-tasks": "^3.5.2",
     "prunk": "^1.3.0",
-    "q": "^1.5.0"
+    "q": "^1.5.0",
+    "minimist": ">=1.2.2",
+    "acorn": ">=5.7.4"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-for-of": "^6.6.0",

@@ -96,9 +96,7 @@ export class GenericDatasource {
       var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
-        data: query,
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
       }).then(response => {
         let results = {
           "data": [{
@@ -139,9 +137,7 @@ export class GenericDatasource {
     } else {
       return this.backendSrv.datasourceRequest({
         url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter='+filter,
-        data: query,
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
       }).then(response => {
         return {
           "data": [{ "datapoints": [ [response.data.data.length, Date.now()] ]}]

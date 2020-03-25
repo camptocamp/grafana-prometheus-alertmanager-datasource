@@ -160,9 +160,7 @@ System.register(['lodash'], function (_export, _context) {
               var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
-                data: query,
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                method: 'GET'
               }).then(function (response) {
                 var results = {
                   "data": [{
@@ -247,9 +245,7 @@ System.register(['lodash'], function (_export, _context) {
             } else {
               return this.backendSrv.datasourceRequest({
                 url: this.url + '/api/v1/alerts?silenced=false&inhibited=false&filter=' + filter,
-                data: query,
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                method: 'GET'
               }).then(function (response) {
                 return {
                   "data": [{ "datapoints": [[response.data.data.length, Date.now()]] }]

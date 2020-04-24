@@ -214,9 +214,7 @@ System.register(['lodash'], function (_export, _context) {
                             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
                             return this.backendSrv.datasourceRequest({
                                 url: url,
-                                data: query,
-                                method: 'GET',
-                                headers: { 'Content-Type': 'application/json' }
+                                method: 'GET'
                             }).then(function (response) {
                                 var results = {
                                     "data": [{
@@ -301,9 +299,7 @@ System.register(['lodash'], function (_export, _context) {
                         } else {
                             return this.backendSrv.datasourceRequest({
                                 url: url,
-                                data: query,
-                                method: 'GET',
-                                headers: { 'Content-Type': 'application/json' }
+                                method: 'GET'
                             }).then(function (response) {
                                 return {
                                     "data": [{ "datapoints": [[response.data.length, Date.now()]] }]

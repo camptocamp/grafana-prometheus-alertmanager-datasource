@@ -1,3 +1,13 @@
+## 0.0.8 (Apr 22, 2020)
+
+- IMPROVEMENTS
+
+  * Add support of variable templating ([#55](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/pull/55))
+
+- BUGFIX
+
+  * Fix datasource request ([#73](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/pull/73))
+
 ## 0.0.7 (Jan 25, 2019)
 
 - IMPROVEMENTS

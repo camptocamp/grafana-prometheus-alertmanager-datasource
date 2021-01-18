@@ -74,6 +74,18 @@ System.register(['app/plugins/sdk', './css/query-editor.css!'], function (_expor
           _this.target.expr = _this.target.expr || '';
           _this.target.legendFormat = _this.target.legendFormat || '';
           _this.target.labelSelector = _this.target.labelSelector || '*';
+
+          var _this$target = _this.target,
+              _this$target$queryAct = _this$target.queryActive,
+              queryActive = _this$target$queryAct === undefined ? true : _this$target$queryAct,
+              _this$target$querySil = _this$target.querySilenced,
+              querySilenced = _this$target$querySil === undefined ? false : _this$target$querySil,
+              _this$target$queryInh = _this$target.queryInhibited,
+              queryInhibited = _this$target$queryInh === undefined ? false : _this$target$queryInh;
+
+          _this.target.queryActive = queryActive;
+          _this.target.querySilenced = querySilenced;
+          _this.target.queryInhibited = queryInhibited;
           return _this;
         }
 

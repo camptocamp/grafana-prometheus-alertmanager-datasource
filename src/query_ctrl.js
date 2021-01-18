@@ -14,6 +14,11 @@ constructor($scope, $injector, uiSegmentSrv)  {
   this.target.expr = this.target.expr || '';
   this.target.legendFormat = this.target.legendFormat || '';
   this.target.labelSelector = this.target.labelSelector || '*';
+
+  let {queryActive = true, querySilenced = false, queryInhibited = false} = this.target;
+  this.target.queryActive = queryActive;
+  this.target.querySilenced = querySilenced;
+  this.target.queryInhibited = queryInhibited;
 }
 
 getOptions(query) {

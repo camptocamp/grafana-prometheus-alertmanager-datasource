@@ -94,6 +94,7 @@ System.register(['lodash'], function (_export, _context) {
                     this.q = $q;
                     this.backendSrv = backendSrv;
                     this.templateSrv = templateSrv;
+                    this.withCredentials = instanceSettings.withCredentials;
 
                     this.severityLevels = {};
                     if (instanceSettings.jsonData.severity_critical != undefined) {
@@ -171,7 +172,9 @@ System.register(['lodash'], function (_export, _context) {
                         };
                         return this.backendSrv.datasourceRequest({
                             url: this.createUrl(defaultTargetData),
-                            method: 'GET'
+                            method: 'GET',
+                            headers: { 'Content-Type': 'application/json' },
+                            withCredentials: this.withCredentials
                         }).then(function (response) {
                             response.data.forEach(function (value) {
                                 if (matchedFunction.type === 'key') {
@@ -214,7 +217,9 @@ System.register(['lodash'], function (_export, _context) {
                             var labelSelector = this.parseLabelSelector(query.targets[0].labelSelector);
                             return this.backendSrv.datasourceRequest({
                                 url: url,
-                                method: 'GET'
+                                method: 'GET',
+                                headers: { 'Content-Type': 'application/json' },
+                                withCredentials: this.withCredentials
                             }).then(function (response) {
                                 var results = {
                                     "data": [{
@@ -299,7 +304,9 @@ System.register(['lodash'], function (_export, _context) {
                         } else {
                             return this.backendSrv.datasourceRequest({
                                 url: url,
-                                method: 'GET'
+                                method: 'GET',
+                                headers: { 'Content-Type': 'application/json' },
+                                withCredentials: this.withCredentials
                             }).then(function (response) {
                                 return {
                                     "data": [{ "datapoints": [[response.data.length, Date.now()]] }]
@@ -444,7 +451,8 @@ System.register(['lodash'], function (_export, _context) {
                     value: function testDatasource() {
                         return this.backendSrv.datasourceRequest({
                             url: this.url + '/api/v2/status',
-                            method: 'GET'
+                            method: 'GET',
+                            withCredentials: this.withCredentials
                         }).then(function (response) {
                             if (response.status === 200) {
                                 return { status: "success", message: "Data source is working", title: "Success" };

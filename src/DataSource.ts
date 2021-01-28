@@ -42,12 +42,13 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       filters.push(`active=${queryActive}`);
       filters.push(`silenced=${querySilenced}`);
       filters.push(`inhibited=${queryInhibited}`);
-      if (query.filters !== undefined) {
+      if (query.filters !== undefined && query.filters.length > 0) {
         query.filters = getTemplateSrv().replace(query.filters, options.scopedVars);
         query.filters.split(',').forEach(value => {
           filters.push(`filter=${value}`);
         });
       }
+
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${filters.join('&')}`,
         method: 'GET',
@@ -65,7 +66,6 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     });
 
     return Promise.all(promises).then(data => {
-      console.log(data);
       return { data };
     });
   }
@@ -98,20 +98,22 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   buildDataFrame(refId: string, data: any) {
     const fields = [{ name: 'Time', type: FieldType.time }];
 
-    const annotations: string[] = data
-      .map((alert: any) => Object.keys(alert.annotations))
-      .reduce((data: string[][]) => data.flat());
-    const labels: string[] = data
-      .map((alert: any) => Object.keys(alert.labels))
-      .reduce((data: string[][]) => data.flat());
-    const attributes: string[] = [...new Set([...annotations, ...labels])];
+    if (data.length > 0) {
+      const annotations: string[] = data
+        .map((alert: any) => Object.keys(alert.annotations))
+        .reduce((data: string[][]) => data.flat());
+      const labels: string[] = data
+        .map((alert: any) => Object.keys(alert.labels))
+        .reduce((data: string[][]) => data.flat());
+      const attributes: string[] = [...new Set([...annotations, ...labels])];
 
-    attributes.forEach((attribute: string) => {
-      fields.push({
-        name: attribute,
-        type: FieldType.string,
+      attributes.forEach((attribute: string) => {
+        fields.push({
+          name: attribute,
+          type: FieldType.string,
+        });
       });
-    });
+    }
 
     const frame = new MutableDataFrame({
       refId: refId,

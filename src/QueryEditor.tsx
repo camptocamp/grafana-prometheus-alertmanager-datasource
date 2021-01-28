@@ -13,6 +13,12 @@ type Props = QueryEditorProps<AlertmanagerDataSource, CustomQuery, GenericOption
 const { FormField, Switch } = LegacyForms;
 
 export class QueryEditor extends PureComponent<Props> {
+  onReceiverChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, receiver: event.target.value });
+    onRunQuery();
+  };
+
   onFiltersChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query, onRunQuery } = this.props;
     onChange({ ...query, filters: event.target.value });
@@ -41,11 +47,20 @@ export class QueryEditor extends PureComponent<Props> {
   };
 
   render() {
-    const { filters, active, silenced, inhibited } = this.props.query;
+    const { receiver, filters, active, silenced, inhibited } = this.props.query;
 
     return (
       <>
         <div className="gf-form-inline">
+          <div className="gf-form">
+            <FormField
+              value={receiver}
+              inputWidth={10}
+              onChange={this.onReceiverChange}
+              labelWidth={5}
+              label="Receiver"
+            />
+          </div>
           <div className="gf-form">
             <FormField
               value={filters}

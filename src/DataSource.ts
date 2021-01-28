@@ -35,22 +35,25 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
 
   async query(options: QueryRequest): Promise<DataQueryResponse> {
     const promises = options.targets.map(query => {
-      let filters: string[] = [];
+      let params: string[] = [];
       const queryActive = query.active ? 'true' : 'false';
       const querySilenced = query.silenced ? 'true' : 'false';
       const queryInhibited = query.inhibited ? 'true' : 'false';
-      filters.push(`active=${queryActive}`);
-      filters.push(`silenced=${querySilenced}`);
-      filters.push(`inhibited=${queryInhibited}`);
+      params.push(`active=${queryActive}`);
+      params.push(`silenced=${querySilenced}`);
+      params.push(`inhibited=${queryInhibited}`);
+      if (query.receiver !== undefined && query.receiver.length > 0) {
+        params.push(`receiver=${query.receiver}`);
+      }
       if (query.filters !== undefined && query.filters.length > 0) {
         query.filters = getTemplateSrv().replace(query.filters, options.scopedVars);
         query.filters.split(',').forEach(value => {
-          filters.push(`filter=${value}`);
+          params.push(`filter=${value}`);
         });
       }
 
       const request = this.doRequest({
-        url: `${this.url}/api/v2/alerts?${filters.join('&')}`,
+        url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
       }).then(request => request.toPromise());
       return request.then((data: any) => {

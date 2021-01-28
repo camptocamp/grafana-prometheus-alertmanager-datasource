@@ -8,6 +8,7 @@ export interface QueryRequest extends DataQueryRequest<CustomQuery> {
 
 export interface CustomQuery extends DataQuery {
   target?: string;
+  receiver: string;
   filters: string;
   active: boolean;
   silenced: boolean;

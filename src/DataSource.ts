@@ -25,14 +25,6 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     }
   }
 
-  parseAlertAttributes(alert: any, fields: any[]) {
-    const row: string[] = [alert.startsAt];
-    fields.slice(1).forEach((element: any) => {
-      row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
-    });
-    return row;
-  }
-
   async query(options: QueryRequest): Promise<DataQueryResponse> {
     const promises = options.targets.map(query => {
       if (query.hide) {
@@ -61,16 +53,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         method: 'GET',
       }).then(request => request.toPromise());
 
-      return request.then((data: any) => {
-        const frame = this.buildDataFrame(query.refId, data.data);
-        data.data.forEach((alert: any) => {
-          const row: string[] = this.parseAlertAttributes(alert, frame.fields);
-          frame.fields.forEach((element: any) => {
-            frame.appendRow(row);
-          });
-        });
-        return Promise.resolve(frame);
-      });
+      return request.then((data: any) => this.retrieveData(query, data));
     });
 
     return Promise.all(promises).then(data => {
@@ -128,5 +111,24 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       fields: fields,
     });
     return frame;
+  }
+
+  parseAlertAttributes(alert: any, fields: any[]) {
+    const row: string[] = [alert.startsAt];
+    fields.slice(1).forEach((element: any) => {
+      row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
+    });
+    return row;
+  }
+
+  retrieveData(query: any, data: any) {
+    const frame = this.buildDataFrame(query.refId, data.data);
+    data.data.forEach((alert: any) => {
+      const row: string[] = this.parseAlertAttributes(alert, frame.fields);
+      frame.fields.forEach((element: any) => {
+        frame.appendRow(row);
+      });
+    });
+    return Promise.resolve(frame);
   }
 }

@@ -86,7 +86,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return getBackendSrv().fetch(options);
   }
 
-  buildDataFrame(refId: string, data: any) {
+  buildDataFrame(refId: string, data: any): MutableDataFrame {
     const fields = [{ name: 'Time', type: FieldType.time }];
 
     if (data.length > 0) {
@@ -113,7 +113,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]) {
+  parseAlertAttributes(alert: any, fields: any[]): string[] {
     const row: string[] = [alert.startsAt];
     fields.slice(1).forEach((element: any) => {
       row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
@@ -121,7 +121,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return row;
   }
 
-  retrieveData(query: any, data: any) {
+  retrieveData(query: any, data: any): Promise<MutableDataFrame> {
     const frame = this.buildDataFrame(query.refId, data.data);
     data.data.forEach((alert: any) => {
       const row: string[] = this.parseAlertAttributes(alert, frame.fields);

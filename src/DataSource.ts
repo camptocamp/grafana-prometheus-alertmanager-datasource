@@ -35,6 +35,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
 
   async query(options: QueryRequest): Promise<DataQueryResponse> {
     const promises = options.targets.map(query => {
+      if (query.hide) {
+        return Promise.resolve(new MutableDataFrame());
+      }
+
       let params: string[] = [];
       const queryActive = query.active ? 'true' : 'false';
       const querySilenced = query.silenced ? 'true' : 'false';
@@ -56,6 +60,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
       }).then(request => request.toPromise());
+
       return request.then((data: any) => {
         const frame = this.buildDataFrame(query.refId, data.data);
         data.data.forEach((alert: any) => {

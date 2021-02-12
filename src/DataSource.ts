@@ -125,9 +125,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     const frame = this.buildDataFrame(query.refId, data.data);
     data.data.forEach((alert: any) => {
       const row: string[] = this.parseAlertAttributes(alert, frame.fields);
-      frame.fields.forEach((element: any) => {
-        frame.appendRow(row);
-      });
+      frame.appendRow(row);
     });
     return Promise.resolve(frame);
   }

@@ -11,15 +11,15 @@
       "url": "https://camptocamp.com"
     },
     "logos": {
-      "small": "img/simpleJson_logo.svg",
-      "large": "img/simpleJson_logo.svg"
+      "small": "img/json-logo.svg",
+      "large": "img/json-logo.svg"
     },
     "links": [
       {"name": "GitHub", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"},
       {"name": "MIT License", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/LICENSE"}
     ],
     "version": "1.0.0",
-    "updated": "2021-01-29"
+    "updated": "2021-02-12"
   },
 
   "dependencies": {

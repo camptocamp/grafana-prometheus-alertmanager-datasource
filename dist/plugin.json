@@ -1,6 +1,6 @@
 {
   "name": "Prometheus AlertManager",
-  "id": "camptocamp-alertmanager-datasource",
+  "id": "camptocamp-prometheus-alertmanager-datasource",
   "type": "datasource",
   "metrics": true,
   "annotations": false,
@@ -23,8 +23,8 @@
       {"name": "Dashboard", "path": "images/overview.png"},
       {"name": "QueryEditor", "path": "images/table.png"}
     ],
-    "version": "1.0.0",
-    "updated": "2021-02-13"
+    "version": "1.1.0",
+    "updated": "2021-04-05"
   },
 
   "dependencies": {

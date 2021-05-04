@@ -1,6 +1,6 @@
 {
   "name": "Prometheus AlertManager",
-  "id": "camptocamp-alertmanager-datasource",
+  "id": "camptocamp-prometheus-alertmanager-datasource",
   "type": "datasource",
   "metrics": true,
   "annotations": false,
@@ -28,7 +28,7 @@
   },
 
   "dependencies": {
-    "grafanaDependency": "7.1.x",
+    "grafanaDependency": ">= 7.1.0",
     "plugins": [ ]
   }
 }

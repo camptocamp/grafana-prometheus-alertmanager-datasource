@@ -1,3 +1,10 @@
+## 1.0.0 (Feb 12, 2021)
+
+- IMPROVEMENTS
+
+  * Rewrite plugin to match latest dev standards (Typescript, Yarn)
+  * Add support of latest Grafana versions
+
 ## 0.0.8 (Apr 22, 2020)
 
 - IMPROVEMENTS

@@ -96,7 +96,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const labels: string[] = data
         .map((alert: any) => Object.keys(alert.labels))
         .reduce((data: string[][]) => data.flat());
-      const attributes: string[] = [...new Set([...annotations, ...labels])];
+      const alertstatus: string[] = ['alertstatus', 'alertstatus_code'];
+      const attributes: string[] = [...new Set([...annotations, ...labels, ...alertstatus])];
 
       attributes.forEach((attribute: string) => {
         fields.push({
@@ -116,6 +117,26 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   parseAlertAttributes(alert: any, fields: any[]): string[] {
     const row: string[] = [alert.startsAt];
     fields.slice(1).forEach((element: any) => {
+      if (element.name === 'alertstatus') {
+        row.push(alert.status.state || '');
+        return;
+      }
+      if (element.name === 'alertstatus_code') {
+        switch (alert.status.state) {
+          case 'unprocessed':
+            row.push('0');
+            return;
+          case 'active':
+            row.push('1');
+            return;
+          case 'suppressed':
+            row.push('2');
+            return;
+          default:
+            row.push('');
+            return;
+        }
+      }
       row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
     });
     return row;

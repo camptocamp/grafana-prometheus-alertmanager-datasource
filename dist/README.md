@@ -1,6 +1,6 @@
 # Grafana datasource for Prometheus Alertmanager
 
-This datasource lets you to use the Alertmanager's API of Prometheus to create dashboards in Grafana.
+This datasource lets you use the Alertmanager's API of Prometheus to create dashboards in Grafana.
 
 ![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/images/overview.png)
 

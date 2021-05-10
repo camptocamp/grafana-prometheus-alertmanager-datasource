@@ -37,3 +37,4 @@ grafana
 /dist/test/
 
 docker-compose.yml
+/dist/

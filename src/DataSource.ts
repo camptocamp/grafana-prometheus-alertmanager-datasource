@@ -42,9 +42,9 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         params.push(`receiver=${query.receiver}`);
       }
       if (query.filters !== undefined && query.filters.length > 0) {
-        query.filters = getTemplateSrv().replace(query.filters, options.scopedVars);
+        query.filters = getTemplateSrv().replace(query.filters, options.scopedVars, this.interpolateQueryExpr);
         query.filters.split(',').forEach(value => {
-          params.push(`filter=${value}`);
+          params.push(`filter=${encodeURIComponent(value)}`);
         });
       }
 
@@ -150,4 +150,31 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     });
     return Promise.resolve(frame);
   }
+
+  interpolateQueryExpr(value: string | string[] = [], variable: any) {
+    // if no multi or include all do not regexEscape
+    if (!variable.multi && !variable.includeAll) {
+      return alertmanagerRegularEscape(value);
+    }
+
+    if (typeof value === 'string') {
+      return alertmanagerSpecialRegexEscape(value);
+    }
+
+    const escapedValues = value.map(val => alertmanagerSpecialRegexEscape(val));
+
+    if (escapedValues.length === 1) {
+      return escapedValues[0];
+    }
+
+    return '(' + escapedValues.join('|') + ')';
+  }
+}
+
+export function alertmanagerRegularEscape(value: any) {
+  return typeof value === 'string' ? value.replace(/\\/g, '\\\\').replace(/'/g, "\\\\'") : value;
+}
+
+export function alertmanagerSpecialRegexEscape(value: any) {
+  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]\'+?()|]/g, '\\\\$&') : value;
 }

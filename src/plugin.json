@@ -6,7 +6,10 @@
   "annotations": false,
   "info": {
     "description": "Prometheus AlertManager datasource",
-    "keywords": ["prometheus", "alertmanager"],
+    "keywords": [
+      "prometheus",
+      "alertmanager"
+    ],
     "author": {
       "name": "Camptocamp",
       "url": "https://camptocamp.com"
@@ -16,19 +19,30 @@
       "large": "img/json-logo.svg"
     },
     "links": [
-      {"name": "GitHub", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"},
-      {"name": "MIT License", "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/LICENSE"}
+      {
+        "name": "GitHub",
+        "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"
+      },
+      {
+        "name": "MIT License",
+        "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/blob/master/LICENSE"
+      }
     ],
     "screenshots": [
-      {"name": "Dashboard", "path": "images/overview.png"},
-      {"name": "QueryEditor", "path": "images/table.png"}
+      {
+        "name": "Dashboard",
+        "path": "images/overview.png"
+      },
+      {
+        "name": "QueryEditor",
+        "path": "images/table.png"
+      }
     ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
-
   "dependencies": {
-    "grafanaDependency": ">= 7.1.0",
-    "plugins": [ ]
+    "grafanaDependency": ">=7.1.0",
+    "plugins": []
   }
 }

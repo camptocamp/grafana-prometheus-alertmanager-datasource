@@ -22,10 +22,10 @@
   },
   "engineStrict": true,
   "devDependencies": {
-    "@grafana/data": "^7.3",
-    "@grafana/runtime": "^7.3",
-    "@grafana/toolkit": "^7.3",
-    "@grafana/ui": "^7.3",
+    "@grafana/data": "^7.5",
+    "@grafana/runtime": "^7.5",
+    "@grafana/toolkit": "^7.5",
+    "@grafana/ui": "^7.5",
     "@types/lodash": "^4.14.160"
   },
   "dependencies": {

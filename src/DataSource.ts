@@ -26,7 +26,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   }
 
   async query(options: QueryRequest): Promise<DataQueryResponse> {
-    const promises = options.targets.map(query => {
+    const promises = options.targets.map((query) => {
       if (query.hide) {
         return Promise.resolve(new MutableDataFrame());
       }
@@ -43,7 +43,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       }
       if (query.filters !== undefined && query.filters.length > 0) {
         query.filters = getTemplateSrv().replace(query.filters, options.scopedVars, this.interpolateQueryExpr);
-        query.filters.split(',').forEach(value => {
+        query.filters.split(',').forEach((value) => {
           params.push(`filter=${encodeURIComponent(value)}`);
         });
       }
@@ -51,12 +51,12 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then(request => request.toPromise());
+      }).then((request) => request.toPromise());
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
 
-    return Promise.all(promises).then(data => {
+    return Promise.all(promises).then((data) => {
       return { data };
     });
   }
@@ -65,8 +65,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return this.doRequest({
       url: this.url,
       method: 'GET',
-    }).then(response =>
-      response.toPromise().then(data => {
+    }).then((response) =>
+      response.toPromise().then((data) => {
         if (data.ok) {
           return { status: 'success', message: 'Datasource is working', title: 'Success' };
         } else {
@@ -161,7 +161,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       return alertmanagerSpecialRegexEscape(value);
     }
 
-    const escapedValues = value.map(val => alertmanagerSpecialRegexEscape(val));
+    const escapedValues = value.map((val) => alertmanagerSpecialRegexEscape(val));
 
     if (escapedValues.length === 1) {
       return escapedValues[0];

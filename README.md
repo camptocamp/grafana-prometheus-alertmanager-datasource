@@ -2,7 +2,7 @@
 
 This datasource lets you use the Alertmanager's API of Prometheus to create dashboards in Grafana.
 
-![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/images/overview.png)
+![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/overview.png)
 
 # Usage
 
@@ -37,7 +37,7 @@ Whether the alerts gathered should be silenced.
 
 Whether the alerts gathered should be inhibited.
 
-![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/images/table.png)
+![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/table.png)
 
 # Development Setup
 

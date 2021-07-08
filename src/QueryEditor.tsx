@@ -4,7 +4,7 @@ import { LegacyForms } from '@grafana/ui';
 import React, { ChangeEvent, PureComponent } from 'react';
 import { AlertmanagerDataSource } from './DataSource';
 
-import { GenericOptions, CustomQuery } from './types';
+import { GenericOptions, CustomQuery, defaultQuery } from './types';
 
 import './css/json-editor.css';
 
@@ -47,7 +47,7 @@ export class QueryEditor extends PureComponent<Props> {
   };
 
   render() {
-    const { receiver, filters, active, silenced, inhibited } = this.props.query;
+    const { receiver, filters, active, silenced, inhibited } = { ...defaultQuery, ...this.props.query };
 
     return (
       <>

@@ -6,7 +6,7 @@ import {
   MutableDataFrame,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
-import { GenericOptions, CustomQuery, QueryRequest } from './types';
+import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -27,6 +27,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
 
   async query(options: QueryRequest): Promise<DataQueryResponse> {
     const promises = options.targets.map((query) => {
+      query = { ...defaultQuery, ...query };
       if (query.hide) {
         return Promise.resolve(new MutableDataFrame());
       }

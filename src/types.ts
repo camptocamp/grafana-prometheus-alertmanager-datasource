@@ -15,6 +15,8 @@ export interface CustomQuery extends DataQuery {
   inhibited: boolean;
 }
 
-export const defaultQuery: Partial<CustomQuery> = {};
+export const defaultQuery: Partial<CustomQuery> = {
+  active: true,
+};
 
 export interface GenericOptions extends DataSourceJsonData {}

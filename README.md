@@ -39,6 +39,20 @@ Whether the alerts gathered should be inhibited.
 
 ![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/table.png)
 
+# Panels
+
+## Singlestat
+
+To use singlestat panels, you must apply a transformation to your metrics:
+
+1. Edit your panel and open the "Transform" tab.
+
+![Transform tab](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/singlestat-transform.png)
+
+2. Select "Reduce" and change the "Calculations" to "Count"
+
+![Reduce transformation](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/singlestat-reduce.png)
+
 # Development Setup
 
 Usage of Yarn is encouraged to build.

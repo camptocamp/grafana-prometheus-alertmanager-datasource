@@ -41,9 +41,9 @@ Whether the alerts gathered should be inhibited.
 
 # Panels
 
-## Singlestat
+## Stat
 
-To use singlestat panels, you must apply a transformation to your metrics:
+To use stat panels, you must apply a transformation to your metrics:
 
 1. Edit your panel and open the "Transform" tab.
 

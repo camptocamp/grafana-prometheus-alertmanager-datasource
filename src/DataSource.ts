@@ -91,12 +91,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     const fields = [{ name: 'Time', type: FieldType.time }];
 
     if (data.length > 0) {
-      const annotations: string[] = data
-        .map((alert: any) => Object.keys(alert.annotations))
-        .reduce((data: string[][]) => data.flat());
-      const labels: string[] = data
-        .map((alert: any) => Object.keys(alert.labels))
-        .reduce((data: string[][]) => data.flat());
+      const annotations: string[] = data.map((alert: any) => Object.keys(alert.annotations)).flat();
+      const labels: string[] = data.map((alert: any) => Object.keys(alert.labels)).flat();
       const alertstatus: string[] = ['alertstatus', 'alertstatus_code'];
       const attributes: string[] = [...new Set([...annotations, ...labels, ...alertstatus])];
 

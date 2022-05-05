@@ -5,6 +5,22 @@
   * Rewrite plugin to match latest dev standards (Typescript, Yarn)
   * Add support of latest Grafana versions
 
+## [1.1.0](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.0.0...v1.1.0) (2022-05-05)
+
+
+### Features
+
+* add doc to configure singlestat panel ([8c51289](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/8c5128940c2baf97ac4118461cb2684170d82a40))
+* add github actions for build process ([29a7494](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/29a7494d8ea864545612f1300970f3f80edb4698))
+* display active alerts by default ([da31418](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/da31418b3aaf83931466656f1801f093491941b3))
+
+
+### Bug Fixes
+
+* build workflow ([b4d72a7](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/b4d72a74782a572d91fc08356185ad65bf010030))
+* **ci:** remove package-lock.json ([db32e71](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/db32e712ee1c6151ddbc5be6032e3d198e3e9800))
+* **doc:** add missing images ([a26d316](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/a26d316a3067d72cc615937a683401ad9e0ed247))
+
 ## 0.0.8 (Apr 22, 2020)
 
 - IMPROVEMENTS

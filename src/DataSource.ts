@@ -7,6 +7,7 @@ import {
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
 import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
+import { firstValueFrom } from 'rxjs';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -52,7 +53,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then((request) => request.toPromise());
+      }).then((request) => firstValueFrom(request));
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
@@ -67,16 +68,23 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       url: this.url,
       method: 'GET',
     }).then((response) =>
-      response.toPromise().then((data) => {
-        if (data.ok) {
-          return { status: 'success', message: 'Datasource is working', title: 'Success' };
-        } else {
-          return {
-            status: 'error',
-            message: `Datasource is not working: ${data.data}`,
-            title: 'Error',
-          };
+      firstValueFrom(response).then((data) => {
+        if (data !== undefined) {
+          if (data.ok) {
+            return { status: 'success', message: 'Datasource is working', title: 'Success' };
+          } else {
+            return {
+              status: 'error',
+              message: `Datasource is not working: ${data.data}`,
+              title: 'Error',
+            };
+          }
         }
+        return {
+          status: 'error',
+          message: `Unknown error in datasource`,
+          title: 'Error',
+        };
       })
     );
   }

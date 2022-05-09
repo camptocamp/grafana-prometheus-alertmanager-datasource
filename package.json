@@ -23,14 +23,14 @@
   },
   "engineStrict": true,
   "devDependencies": {
-    "@grafana/data": "^7.5",
-    "@grafana/runtime": "^7.5",
-    "@grafana/toolkit": "^7.5",
-    "@grafana/ui": "^7.5",
-    "@types/lodash": "^4.14.160"
+    "@grafana/data": "^8.5.2",
+    "@grafana/runtime": "^8.5.2",
+    "@grafana/toolkit": "^8.5.2",
+    "@grafana/ui": "^8.5.2",
+    "@types/lodash": "^4.14.182"
   },
   "dependencies": {
-    "lodash": "^4.17.20",
-    "tslib": "^2.3.0"
+    "lodash": "^4.17.21",
+    "tslib": "^2.4.0"
   }
 }

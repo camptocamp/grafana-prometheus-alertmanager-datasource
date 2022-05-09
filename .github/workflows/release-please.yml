@@ -16,6 +16,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: node
           changelog-path: CHANGELOG.md
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous Changes","hidden":false}]'
 
       - name: Checkout codebase
         uses: actions/checkout@v2

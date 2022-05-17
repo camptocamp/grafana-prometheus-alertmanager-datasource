@@ -96,7 +96,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   }
 
   buildDataFrame(refId: string, data: any): MutableDataFrame {
-    const fields = [{ name: 'Time', type: FieldType.time }];
+    const fields = [
+      { name: 'Time', type: FieldType.time },
+      { name: 'SeverityValue', type: FieldType.number },
+    ];
 
     if (data.length > 0) {
       const annotations: string[] = data.map((alert: any) => Object.keys(alert.annotations)).flat();
@@ -120,28 +123,23 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   }
 
   parseAlertAttributes(alert: any, fields: any[]): string[] {
-    const row: string[] = [alert.startsAt];
-    fields.slice(1).forEach((element: any) => {
-      if (element.name === 'alertstatus') {
-        row.push(alert.status.state || '');
-        return;
-      }
-      if (element.name === 'alertstatus_code') {
-        switch (alert.status.state) {
-          case 'unprocessed':
-            row.push('0');
-            return;
-          case 'active':
-            row.push('1');
-            return;
-          case 'suppressed':
-            row.push('2');
-            return;
-          default:
-            row.push('');
-            return;
-        }
-      }
+    let severityValue = 4;
+    switch (alert.labels['severity']) {
+      case 'critical':
+        severityValue = 1;
+        break;
+      case 'warning':
+        severityValue = 2;
+        break;
+      case 'info':
+        severityValue = 3;
+        break;
+      default:
+        break;
+    }
+
+    const row: string[] = [alert.startsAt, severityValue];
+    fields.slice(2).forEach((element: any) => {
       row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
     });
     return row;

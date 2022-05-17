@@ -20,6 +20,26 @@
 * **doc:** add missing images ([a26d316](https://www.github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/a26d316a3067d72cc615937a683401ad9e0ed247))
 
 
+## [1.2.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.1.0...v1.2.0) (2022-05-17)
+
+
+### Features
+
+* add numerical severity value on alerts ([#98](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/98)) ([ad98492](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/ad984928626f8e8348a136d17395e76058cca9fa))
+
+
+### Bug Fixes
+
+* labels and annotations merged only from the first alert ([#118](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/118)) ([a49e90e](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/a49e90e3426738e9d62cda87155c8786cc727325))
+
+
+### Miscellaneous Changes
+
+* update .gitignore with vscode and build directories ([d350bb1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/d350bb107ff7d0400c6777e6477c004f05fd5d52))
+* upgrade grafana dependencies to v8.5.2 ([2df0340](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/2df0340f88edf57997cc5b01f840b56f4587be69))
+* upgrade lodash to v4.17.21 ([913bb00](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/913bb0003507bf2946593106976d33d393bba93e))
+* upgrade tslib to v2.4.0 ([913bb00](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/913bb0003507bf2946593106976d33d393bba93e))
+
 ## 1.0.0 (Feb 12, 2021)
 
 - IMPROVEMENTS

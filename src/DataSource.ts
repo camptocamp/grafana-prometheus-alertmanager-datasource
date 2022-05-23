@@ -118,29 +118,6 @@ export class AlertmanagerDataSource extends DataSourceApi<EditorQuery, GenericOp
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]): string[] {
-    let severityValue = 4;
-    switch (alert.labels['severity']) {
-      case 'critical':
-        severityValue = 1;
-        break;
-      case 'warning':
-        severityValue = 2;
-        break;
-      case 'info':
-        severityValue = 3;
-        break;
-      default:
-        break;
-    }
-
-    const row: string[] = [alert.startsAt, severityValue];
-    fields.slice(2).forEach((element: any) => {
-      row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
-    });
-    return row;
-  }
-
   retrieveData(query: any, data: any): Promise<MutableDataFrame> {
     switch (query.scenario) {
       case scenarios.alerts:

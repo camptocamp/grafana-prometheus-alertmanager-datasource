@@ -31,11 +31,11 @@
     "screenshots": [
       {
         "name": "Dashboard",
-        "path": "images/overview.png"
+        "path": "img/overview.png"
       },
       {
         "name": "QueryEditor",
-        "path": "images/table.png"
+        "path": "img/table.png"
       }
     ],
     "version": "%VERSION%",

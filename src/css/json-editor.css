@@ -5,3 +5,7 @@
 .grafana-json-datasource-editor div {
     width: 100%;
 }
+
+row {
+    display: block;
+}

@@ -6,7 +6,14 @@ import {
   MutableDataFrame,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
-import { GenericOptions, CustomQuery, QueryRequest } from './types';
+import {
+  AlertStateLabel,
+  GenericOptions,
+  CustomQuery,
+  QueryRequest,
+  FullDisplayMode,
+  SummaryDisplayMode,
+} from './types';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -86,7 +93,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return getBackendSrv().fetch(options);
   }
 
-  buildDataFrame(refId: string, data: any): MutableDataFrame {
+  buildDataFrame(query: any, data: any): MutableDataFrame {
     const fields = [{ name: 'Time', type: FieldType.time }];
 
     if (data.length > 0) {
@@ -104,29 +111,108 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
           type: FieldType.string,
         });
       });
+      if (query.displayState) {
+        fields.push({
+          name: AlertStateLabel,
+          type: FieldType.string,
+        });
+      }
     }
 
     const frame = new MutableDataFrame({
-      refId: refId,
+      refId: query.refId,
       fields: fields,
     });
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]): string[] {
+  buildSummaryDataFrame(query: any): MutableDataFrame {
+    var fields: Array<{ name: string; type: FieldType }> = [];
+    if (query.active) {
+      fields.push({
+        name: 'Active',
+        type: FieldType.number,
+      });
+    }
+    if (query.silenced) {
+      fields.push({
+        name: 'Silenced',
+        type: FieldType.number,
+      });
+    }
+    if (query.inhibited) {
+      fields.push({
+        name: 'Inhibited',
+        type: FieldType.number,
+      });
+    }
+    const frame = new MutableDataFrame({
+      refId: query.refId,
+      fields: fields,
+    });
+    return frame;
+  }
+
+  parseAlertAttributes(alert: any, fields: any[], displayState: boolean): string[] {
     const row: string[] = [alert.startsAt];
     fields.slice(1).forEach((element: any) => {
-      row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
+      if (displayState && element.name === AlertStateLabel) {
+        row.push(alert.status.state);
+      } else {
+        row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
+      }
     });
     return row;
   }
 
-  retrieveData(query: any, data: any): Promise<MutableDataFrame> {
-    const frame = this.buildDataFrame(query.refId, data.data);
+  parseAlertCounts(query: any, data: any): string[] {
+    let active = 0;
+    let silenced = 0;
+    let inhibited = 0;
     data.data.forEach((alert: any) => {
-      const row: string[] = this.parseAlertAttributes(alert, frame.fields);
-      frame.appendRow(row);
+      let state: string = alert.status.state;
+      switch (state) {
+        case 'active': {
+          active++;
+          break;
+        }
+        case 'suppressed': {
+          silenced++;
+          break;
+        }
+        case 'inhibited': {
+          inhibited++;
+          break;
+        }
+      }
     });
-    return Promise.resolve(frame);
+    const row: string[] = [];
+    if (query.active) {
+      row.push(active.toString());
+    }
+    if (query.silenced) {
+      row.push(silenced.toString());
+    }
+    if (query.inhibited) {
+      row.push(inhibited.toString());
+    }
+    return row;
+  }
+
+  retrieveData(query: any, data: any): Promise<MutableDataFrame> {
+    if (query.displayMode === SummaryDisplayMode) {
+      const frame = this.buildSummaryDataFrame(query);
+      frame.appendRow(this.parseAlertCounts(query, data));
+      return Promise.resolve(frame);
+    } else if (query.displayMode === FullDisplayMode) {
+      const frame = this.buildDataFrame(query, data.data);
+      data.data.forEach((alert: any) => {
+        const row: string[] = this.parseAlertAttributes(alert, frame.fields, query.displayState);
+        frame.appendRow(row);
+      });
+      return Promise.resolve(frame);
+    } else {
+      return Promise.resolve(new MutableDataFrame());
+    }
   }
 }

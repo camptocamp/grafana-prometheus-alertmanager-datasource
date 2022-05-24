@@ -1,15 +1,18 @@
+import { EditorQuery, scenarios } from './types';
 import {
+  DataQueryRequest,
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
   FieldType,
   MutableDataFrame,
 } from '@grafana/data';
-import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
-import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
+import { getBackendSrv } from '@grafana/runtime';
+import { alertsQueryBuilder, retrieveAlertsData } from './alerts/query';
+import { CustomAlertQuery, GenericOptions } from './alerts/types';
 import { firstValueFrom } from 'rxjs';
 
-export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
+export class AlertmanagerDataSource extends DataSourceApi<EditorQuery, GenericOptions> {
   url: string;
   withCredentials: boolean;
   headers: any;
@@ -26,34 +29,27 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     }
   }
 
-  async query(options: QueryRequest): Promise<DataQueryResponse> {
+  async query(options: DataQueryRequest<EditorQuery>): Promise<DataQueryResponse> {
+    let url: string;
+    let params: string[];
     const promises = options.targets.map((query) => {
-      query = { ...defaultQuery, ...query };
       if (query.hide) {
         return Promise.resolve(new MutableDataFrame());
       }
 
-      let params: string[] = [];
-      const queryActive = query.active ? 'true' : 'false';
-      const querySilenced = query.silenced ? 'true' : 'false';
-      const queryInhibited = query.inhibited ? 'true' : 'false';
-      params.push(`active=${queryActive}`);
-      params.push(`silenced=${querySilenced}`);
-      params.push(`inhibited=${queryInhibited}`);
-      if (query.receiver !== undefined && query.receiver.length > 0) {
-        params.push(`receiver=${query.receiver}`);
-      }
-      if (query.filters !== undefined && query.filters.length > 0) {
-        query.filters = getTemplateSrv().replace(query.filters, options.scopedVars, this.interpolateQueryExpr);
-        query.filters.split(',').forEach((value) => {
-          params.push(`filter=${encodeURIComponent(value)}`);
-        });
+      switch (query.scenario) {
+        case scenarios.alerts:
+          params = alertsQueryBuilder(this, query as CustomAlertQuery, options);
+          url = `${this.url}/api/v2/alerts?${params.join('&')}`;
+          break;
+        default:
+          return new Promise(() => null);
       }
 
       const request = this.doRequest({
-        url: `${this.url}/api/v2/alerts?${params.join('&')}`,
+        url: url,
         method: 'GET',
-      }).then((request) => firstValueFrom(request));
+      }).then((request: any) => firstValueFrom(request));
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
@@ -122,36 +118,14 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]): string[] {
-    let severityValue = 4;
-    switch (alert.labels['severity']) {
-      case 'critical':
-        severityValue = 1;
-        break;
-      case 'warning':
-        severityValue = 2;
-        break;
-      case 'info':
-        severityValue = 3;
-        break;
-      default:
-        break;
-    }
-
-    const row: string[] = [alert.startsAt, severityValue];
-    fields.slice(2).forEach((element: any) => {
-      row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
-    });
-    return row;
-  }
-
   retrieveData(query: any, data: any): Promise<MutableDataFrame> {
-    const frame = this.buildDataFrame(query.refId, data.data);
-    data.data.forEach((alert: any) => {
-      const row: string[] = this.parseAlertAttributes(alert, frame.fields);
-      frame.appendRow(row);
-    });
-    return Promise.resolve(frame);
+    switch (query.scenario) {
+      case scenarios.alerts:
+        return retrieveAlertsData(query, data);
+
+      default:
+        return new Promise(() => null);
+    }
   }
 
   interpolateQueryExpr(value: string | string[] = [], variable: any) {

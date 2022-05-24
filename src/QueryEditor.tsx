@@ -1,86 +1,67 @@
-import { QueryEditorProps } from '@grafana/data';
-import { LegacyForms } from '@grafana/ui';
+import defaults from 'lodash/defaults';
+import React, { useCallback } from 'react';
+import { EditorQuery, QEditorProps, scenarios } from './types';
+import AlertsQueryEditor from './alerts/QueryEditor';
+import FormSelect from './components/FormSelect';
 
-import React, { ChangeEvent, PureComponent } from 'react';
-import { AlertmanagerDataSource } from './DataSource';
+const scenarioOptions = {
+  [scenarios.alerts]: { label: 'Alerts', value: scenarios.alerts },
+};
 
-import { GenericOptions, CustomQuery, defaultQuery } from './types';
+const defaultQuery: Partial<EditorQuery> = {
+  scenario: scenarios.alerts,
+};
 
-import './css/json-editor.css';
+export const QueryEditor = (props: QEditorProps) => {
+  const query = defaults(props.query, defaultQuery);
 
-type Props = QueryEditorProps<AlertmanagerDataSource, CustomQuery, GenericOptions>;
+  const onFormChange = useCallback(
+    (key: any, value: { value: any }, forceRunQuery = false) => {
+      let newQuery;
+      if (typeof key === 'object') {
+        newQuery = { ...query, ...key };
+      }
+      if (typeof key === 'string') {
+        newQuery = { ...query, [key]: value?.value ?? value ?? '' };
+      }
+      props.onChange(newQuery);
+      forceRunQuery && props.onRunQuery();
+    },
+    [query]
+  );
 
-const { FormField, Switch } = LegacyForms;
+  const onScenarioChange = useCallback((scenario: any) => {
+    props.onChange({ scenario: scenario.value } as EditorQuery);
+  }, []);
 
-export class QueryEditor extends PureComponent<Props> {
-  onReceiverChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, receiver: event.target.value });
-    onRunQuery();
+  const editorsProps = {
+    ...props,
+    onFormChange,
   };
 
-  onFiltersChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, filters: event.target.value });
-    onRunQuery();
-  };
-
-  onActiveChange = () => {
-    const { onChange, query, onRunQuery } = this.props;
-    query.active = !query.active;
-    onChange({ ...query });
-    onRunQuery();
-  };
-
-  onSilencedChange = () => {
-    const { onChange, query, onRunQuery } = this.props;
-    query.silenced = !query.silenced;
-    onChange({ ...query });
-    onRunQuery();
-  };
-
-  onInhibitedChange = () => {
-    const { onChange, query, onRunQuery } = this.props;
-    query.inhibited = !query.inhibited;
-    onChange({ ...query });
-    onRunQuery();
-  };
-
-  render() {
-    const { receiver, filters, active, silenced, inhibited } = { ...defaultQuery, ...this.props.query };
-
-    return (
-      <>
-        <div className="gf-form-inline">
-          <div className="gf-form">
-            <FormField
-              value={receiver}
-              inputWidth={10}
-              onChange={this.onReceiverChange}
-              labelWidth={5}
-              label="Receiver"
-            />
-          </div>
-          <div className="gf-form">
-            <FormField
-              value={filters}
-              inputWidth={30}
-              onChange={this.onFiltersChange}
-              labelWidth={15}
-              label="Filters (comma separated key=value)"
-            />
-          </div>
-          <div className="gf-form">
-            <Switch label="Active" checked={active} onChange={this.onActiveChange} />
-          </div>
-          <div className="gf-form">
-            <Switch label="Silenced" checked={silenced} onChange={this.onSilencedChange} />
-          </div>
-          <div className="gf-form">
-            <Switch label="Inhibited" checked={inhibited} onChange={this.onInhibitedChange} />
-          </div>
-        </div>
-      </>
-    );
+  let editor: any;
+  switch (query.scenario) {
+    case scenarios.alerts:
+      editor = <AlertsQueryEditor {...editorsProps} />;
+      break;
+    default:
+      editor = null;
   }
-}
+
+  return (
+    <div className={'gf-form-group'}>
+      <div className={'gf-form'}>
+        <FormSelect
+          queryKeyword
+          inputWidth={0}
+          label={'Scenario'}
+          tooltip={'Select scenario'}
+          value={query.scenario}
+          options={Object.values(scenarioOptions)}
+          onChange={onScenarioChange}
+        />
+      </div>
+      {editor}
+    </div>
+  );
+};

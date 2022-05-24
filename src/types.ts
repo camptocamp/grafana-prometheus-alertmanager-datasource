@@ -1,22 +1,23 @@
-import { DataQuery, DataQueryRequest, DataSourceJsonData } from '@grafana/data';
+import { DataQuery, DataSourceJsonData, QueryEditorProps } from '@grafana/data';
+import { AlertmanagerDataSource } from 'DataSource';
 
-export interface DataSourceOptions extends DataSourceJsonData {}
-
-export interface QueryRequest extends DataQueryRequest<CustomQuery> {
-  adhocFilters?: any[];
+export interface EditorQuery extends DataQuery {
+  scenario: string;
 }
 
-export interface CustomQuery extends DataQuery {
-  target?: string;
-  receiver: string;
-  filters: string;
-  active: boolean;
-  silenced: boolean;
-  inhibited: boolean;
-}
-
-export const defaultQuery: Partial<CustomQuery> = {
-  active: true,
-};
+export type QEditorProps = QueryEditorProps<AlertmanagerDataSource, EditorQuery>;
 
 export interface GenericOptions extends DataSourceJsonData {}
+
+export type OnChangeType = (key: string | object, value?: any, runQuery?: boolean) => void;
+
+export interface ScenarioProps<TsQuery extends EditorQuery>
+  extends QueryEditorProps<AlertmanagerDataSource, EditorQuery> {
+  query: TsQuery;
+  onFormChange: OnChangeType;
+}
+
+export const scenarios = {
+  alerts: 'alerts',
+  silences: 'silences',
+};

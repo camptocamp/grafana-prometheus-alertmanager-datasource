@@ -7,7 +7,6 @@ import {
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
 import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
-import { firstValueFrom } from 'rxjs';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -53,7 +52,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then((request) => firstValueFrom(request));
+      }).then((request) => request.toPromise());
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
@@ -68,7 +67,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       url: this.url,
       method: 'GET',
     }).then((response) =>
-      firstValueFrom(response).then((data) => {
+      response.toPromise().then((data) => {
         if (data !== undefined) {
           if (data.ok) {
             return { status: 'success', message: 'Datasource is working', title: 'Success' };

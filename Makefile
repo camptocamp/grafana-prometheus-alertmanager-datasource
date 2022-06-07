@@ -11,6 +11,11 @@ install:
 build:
 	yarn run build
 
+## build-dev: Build plugin in dav mode (allow console logs)
+.PHONY: build-dev
+build-dev:
+	yarn run dev
+
 ## sign: Sign plugin
 .PHONY: sign
 sign:
@@ -27,7 +32,7 @@ release: install build sign
 
 ## run-dev: Build and run Docker dev container on port 3000
 .PHONY: run-dev
-run-dev: install build
+run-dev: install build-dev
 	docker run -d \
     -e GF_DEFAULT_APP_MODE=development \
     -p 3000:3000 \

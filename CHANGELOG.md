@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.2.0...v1.2.1) (2022-06-07)
+
+
+### Bug Fixes
+
+* Object(...) is not a function error ([da97b6f](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/da97b6f9ecca6577adede99b8619fe9b833e88b0))
+
+
+### Miscellaneous Changes
+
+* set required grafana version to >= 7.5.0 ([8830627](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/8830627e785791bc5f362d5dafe011e9f2192e65))
+
 ## [1.2.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.1.0...v1.2.0) (2022-05-17)
 
 

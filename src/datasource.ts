@@ -120,16 +120,19 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   }
 
   parseAlertAttributes(alert: any, fields: any[]): string[] {
-    let severityValue = 4;
+    let severityValue = 0;
     switch (alert.labels['severity']) {
       case 'critical':
-        severityValue = 1;
+        severityValue = 4;
+        break;
+      case 'high':
+        severityValue = 3;
         break;
       case 'warning':
         severityValue = 2;
         break;
       case 'info':
-        severityValue = 3;
+        severityValue = 1;
         break;
       default:
         break;

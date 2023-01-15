@@ -1,7 +1,5 @@
 import { DataQuery, DataQueryRequest, DataSourceJsonData } from '@grafana/data';
 
-export interface DataSourceOptions extends DataSourceJsonData {}
-
 export interface QueryRequest extends DataQueryRequest<CustomQuery> {
   adhocFilters?: any[];
 }

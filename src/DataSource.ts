@@ -7,6 +7,7 @@ import {
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
 import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
+import { lastValueFrom } from 'rxjs';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -52,7 +53,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then((request) => request.toPromise());
+      }).then((data) => lastValueFrom(data));
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
@@ -66,8 +67,11 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return this.doRequest({
       url: this.url,
       method: 'GET',
-    }).then((response) =>
-      response.toPromise().then((data) => {
+    })
+      .then((response) => {
+        return lastValueFrom(response);
+      })
+      .then((data) => {
         if (data !== undefined) {
           if (data.ok) {
             return { status: 'success', message: 'Datasource is working', title: 'Success' };
@@ -84,8 +88,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
           message: `Unknown error in datasource`,
           title: 'Error',
         };
-      })
-    );
+      });
   }
 
   async doRequest(options: any) {
@@ -114,11 +117,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       });
     }
 
-    const frame = new MutableDataFrame({
+    return new MutableDataFrame({
       refId: refId,
       fields: fields,
     });
-    return frame;
   }
 
   parseAlertAttributes(alert: any, fields: any[]): string[] {
@@ -178,5 +180,5 @@ export function alertmanagerRegularEscape(value: any) {
 }
 
 export function alertmanagerSpecialRegexEscape(value: any) {
-  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]\'+?()|]/g, '\\\\$&') : value;
+  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]'+?()|]/g, '\\\\$&') : value;
 }

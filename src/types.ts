@@ -11,6 +11,7 @@ export interface CustomQuery extends DataQuery {
   active: boolean;
   silenced: boolean;
   inhibited: boolean;
+  field: string;
 }
 
 export const defaultQuery: Partial<CustomQuery> = {

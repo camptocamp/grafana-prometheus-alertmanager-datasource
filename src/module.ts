@@ -3,6 +3,7 @@ import { ConfigEditor } from './ConfigEditor';
 import { AlertmanagerDataSource } from './DataSource';
 import { QueryEditor } from './QueryEditor';
 import { CustomQuery, GenericOptions } from './types';
+import { CustomVariableQueryEditor } from './VariableQueryEditor';
 
 class GenericAnnotationsQueryCtrl {
   static templateUrl = 'partials/annotations.editor.html';
@@ -11,4 +12,5 @@ class GenericAnnotationsQueryCtrl {
 export const plugin = new DataSourcePlugin<AlertmanagerDataSource, CustomQuery, GenericOptions>(AlertmanagerDataSource)
   .setAnnotationQueryCtrl(GenericAnnotationsQueryCtrl)
   .setConfigEditor(ConfigEditor)
-  .setQueryEditor(QueryEditor);
+  .setQueryEditor(QueryEditor)
+  .setVariableQueryEditor(CustomVariableQueryEditor);

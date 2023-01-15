@@ -39,6 +39,12 @@ Whether the alerts gathered should be inhibited.
 
 ![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/table.png)
 
+# Variable Query Editor
+
+Additionally, to the query editor options, the `Field` must be filled whose values are used for the variable.
+
+![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/variablequeryeditor.png)
+
 # Panels
 
 ## Stat

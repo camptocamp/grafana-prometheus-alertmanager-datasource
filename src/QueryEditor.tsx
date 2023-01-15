@@ -27,27 +27,36 @@ export class QueryEditor extends PureComponent<Props> {
 
   onActiveChange = () => {
     const { onChange, query, onRunQuery } = this.props;
-    query.active = !query.active;
-    onChange({ ...query });
+    let newQuery = { ...query };
+    newQuery.active = !query.active;
+    onChange(newQuery);
     onRunQuery();
   };
 
   onSilencedChange = () => {
     const { onChange, query, onRunQuery } = this.props;
-    query.silenced = !query.silenced;
-    onChange({ ...query });
+    let newQuery = { ...query };
+    newQuery.silenced = !query.silenced;
+    onChange(newQuery);
     onRunQuery();
   };
 
   onInhibitedChange = () => {
     const { onChange, query, onRunQuery } = this.props;
-    query.inhibited = !query.inhibited;
-    onChange({ ...query });
+    let newQuery = { ...query };
+    newQuery.inhibited = !query.inhibited;
+    onChange(newQuery);
     onRunQuery();
   };
 
-  render() {
-    const { receiver, filters, active, silenced, inhibited } = { ...defaultQuery, ...this.props.query };
+  onFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({ ...query, field: event.target.value });
+    onRunQuery();
+  };
+
+  baseRender(showField: boolean) {
+    let { receiver, filters, active, silenced, inhibited, field } = { ...defaultQuery, ...this.props.query };
 
     return (
       <>
@@ -70,6 +79,18 @@ export class QueryEditor extends PureComponent<Props> {
               label="Filters (comma separated key=value)"
             />
           </div>
+          {showField && (
+            <div className="gf-form">
+              <FormField
+                value={field}
+                inputWidth={10}
+                onChange={this.onFieldChange}
+                labelWidth={5}
+                label="Field"
+                tooltip="Variables are taken from the values of this field in the query result"
+              />
+            </div>
+          )}
           <div className="gf-form">
             <Switch label="Active" checked={active} onChange={this.onActiveChange} />
           </div>
@@ -82,5 +103,9 @@ export class QueryEditor extends PureComponent<Props> {
         </div>
       </>
     );
+  }
+
+  render() {
+    return this.baseRender(false);
   }
 }

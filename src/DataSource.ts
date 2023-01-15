@@ -3,10 +3,13 @@ import {
   DataSourceApi,
   DataSourceInstanceSettings,
   FieldType,
+  MetricFindValue,
   MutableDataFrame,
+  ScopedVars,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
 import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
+import { lastValueFrom } from 'rxjs';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -25,8 +28,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     }
   }
 
-  async query(options: QueryRequest): Promise<DataQueryResponse> {
-    const promises = options.targets.map((query) => {
+  async doQuery(queries: CustomQuery[], scopedVars?: ScopedVars): Promise<MutableDataFrame[]> {
+    const promises = queries.map((query) => {
       query = { ...defaultQuery, ...query };
       if (query.hide) {
         return Promise.resolve(new MutableDataFrame());
@@ -43,22 +46,58 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         params.push(`receiver=${query.receiver}`);
       }
       if (query.filters !== undefined && query.filters.length > 0) {
-        query.filters = getTemplateSrv().replace(query.filters, options.scopedVars, this.interpolateQueryExpr);
+        query.filters = getTemplateSrv().replace(query.filters, scopedVars, this.interpolateQueryExpr);
         query.filters.split(',').forEach((value) => {
           params.push(`filter=${encodeURIComponent(value)}`);
         });
       }
 
-      const request = this.doRequest({
+      return this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then((request) => request.toPromise());
-
-      return request.then((data: any) => this.retrieveData(query, data));
+      })
+        .then((data) => lastValueFrom(data))
+        .then((data) => {
+          return this.retrieveData(query, data);
+        })
+        .catch(() => {
+          return new MutableDataFrame();
+        });
     });
 
     return Promise.all(promises).then((data) => {
+      return data;
+    });
+  }
+
+  async query(options: QueryRequest): Promise<DataQueryResponse> {
+    return this.doQuery(options.targets, options.scopedVars).then((data) => {
       return { data };
+    });
+  }
+
+  async metricFindQuery(query: CustomQuery, options?: any): Promise<MetricFindValue[]> {
+    if (typeof query.field === undefined) {
+      return [];
+    }
+    const response = (await this.doQuery([query], options.scopedVars))[0];
+
+    let fieldIndex = -1;
+    response.fields.forEach((field, index) => {
+      if (field.name === query.field) {
+        fieldIndex = index;
+      }
+    });
+    if (fieldIndex === -1) {
+      return [];
+    }
+
+    const values = response.fields[fieldIndex].values.toArray().map((val) => {
+      return val.toString();
+    });
+    const unique = [...new Set(values)];
+    return unique.map((val) => {
+      return { text: val };
     });
   }
 
@@ -66,8 +105,11 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return this.doRequest({
       url: this.url,
       method: 'GET',
-    }).then((response) =>
-      response.toPromise().then((data) => {
+    })
+      .then((response) => {
+        return lastValueFrom(response);
+      })
+      .then((data) => {
         if (data !== undefined) {
           if (data.ok) {
             return { status: 'success', message: 'Datasource is working', title: 'Success' };
@@ -84,8 +126,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
           message: `Unknown error in datasource`,
           title: 'Error',
         };
-      })
-    );
+      });
   }
 
   async doRequest(options: any) {
@@ -114,11 +155,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       });
     }
 
-    const frame = new MutableDataFrame({
+    return new MutableDataFrame({
       refId: refId,
       fields: fields,
     });
-    return frame;
   }
 
   parseAlertAttributes(alert: any, fields: any[]): string[] {
@@ -178,5 +218,5 @@ export function alertmanagerRegularEscape(value: any) {
 }
 
 export function alertmanagerSpecialRegexEscape(value: any) {
-  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]\'+?()|]/g, '\\\\$&') : value;
+  return typeof value === 'string' ? value.replace(/\\/g, '\\\\\\\\').replace(/[$^*{}\[\]'+?()|]/g, '\\\\$&') : value;
 }

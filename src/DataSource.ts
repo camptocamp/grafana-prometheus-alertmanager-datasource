@@ -54,7 +54,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         method: 'GET',
       }).then((request) => request.toPromise());
 
-      return request.then((data: any) => this.retrieveData(query, data));
+      return request.then((data: any) => this.retrieveData(query, data, this.url));
     });
 
     return Promise.all(promises).then((data) => {
@@ -144,12 +144,13 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return row;
   }
 
-  retrieveData(query: any, data: any): Promise<MutableDataFrame> {
+  retrieveData(query: any, data: any, url: any): Promise<MutableDataFrame> {
     const frame = this.buildDataFrame(query.refId, data.data);
     data.data.forEach((alert: any) => {
       const row: string[] = this.parseAlertAttributes(alert, frame.fields);
       frame.appendRow(row);
     });
+    frame.appendRow(url);
     return Promise.resolve(frame);
   }
 

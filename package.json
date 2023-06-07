@@ -1,5 +1,5 @@
 {
-  "name": "camptocamp-prometheus-alertmanager-datasource",
+  "name": "spec-alertmanager-datasource",
   "version": "1.2.1",
   "description": "Grafana Datasource for Prometheus Alertmanager by Camptocamp",
   "main": "index.js",
@@ -12,15 +12,8 @@
     "prettier:check": "prettier --list-different \"**/*.{ts,tsx,scss}\"",
     "prettier:write": "prettier --list-different \"**/*.{ts,tsx,scss}\" --write"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource.git"
-  },
   "author": "Camptocamp",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues"
-  },
   "engineStrict": true,
   "devDependencies": {
     "@grafana/data": "^8.5.2",

@@ -17,7 +17,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     super(instanceSettings);
 
     this.url = instanceSettings.url === undefined ? '' : instanceSettings.url;
-
+    console.log(this.url);
+    console.log(instanceSettings.url);
     this.withCredentials = instanceSettings.withCredentials !== undefined;
     this.headers = { 'Content-Type': 'application/json' };
     if (typeof instanceSettings.basicAuth === 'string' && instanceSettings.basicAuth.length > 0) {
@@ -48,13 +49,24 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
           params.push(`filter=${encodeURIComponent(value)}`);
         });
       }
-
+      const ds_api_url = this.url.split('/');
+      const ind = ds_api_url.indexOf('proxy');
+      if (ind !== -1) {
+        ds_api_url.splice(ind, 1);
+      }
+      const api_url = ds_api_url.join('/');
+      const req_datasource = this.doRequest({
+        url: `${api_url}`,
+        method: 'GET',
+      }).then((req_datasource) => req_datasource.toPromise());
+      console.log(req_datasource);
+      let datasource_url = '';
+      req_datasource.then((data: any) => (datasource_url = data.data.url));
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
       }).then((request) => request.toPromise());
-
-      return request.then((data: any) => this.retrieveData(query, data, this.url));
+      return request.then((data: any) => this.retrieveData(query, data, datasource_url));
     });
 
     return Promise.all(promises).then((data) => {
@@ -94,10 +106,11 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return getBackendSrv().fetch(options);
   }
 
-  buildDataFrame(refId: string, data: any): MutableDataFrame {
+  buildDataFrame(refId: string, data: any, url: string): MutableDataFrame {
     const fields = [
       { name: 'Time', type: FieldType.time },
       { name: 'SeverityValue', type: FieldType.number },
+      { name: 'DataSource', type: FieldType.string },
     ];
 
     if (data.length > 0) {
@@ -113,15 +126,16 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         });
       });
     }
-
+    console.log(fields);
     const frame = new MutableDataFrame({
       refId: refId,
       fields: fields,
     });
+    console.log(frame);
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]): string[] {
+  parseAlertAttributes(alert: any, fields: any[], url: any): string[] {
     let severityValue = 4;
     switch (alert.labels['severity']) {
       case 'critical':
@@ -137,20 +151,21 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         break;
     }
 
-    const row: string[] = [alert.startsAt, severityValue];
+    const row: string[] = [alert.startsAt, severityValue, url];
     fields.slice(2).forEach((element: any) => {
       row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
     });
+    console.log(row);
     return row;
   }
 
   retrieveData(query: any, data: any, url: any): Promise<MutableDataFrame> {
-    const frame = this.buildDataFrame(query.refId, data.data);
+    const frame = this.buildDataFrame(query.refId, data.data, url);
     data.data.forEach((alert: any) => {
-      const row: string[] = this.parseAlertAttributes(alert, frame.fields);
+      const row: string[] = this.parseAlertAttributes(alert, frame.fields, url);
       frame.appendRow(row);
     });
-    frame.appendRow(url);
+
     return Promise.resolve(frame);
   }
 

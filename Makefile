@@ -3,6 +3,12 @@ VERSION       := $(shell git describe --tags --abbrev=0)
 
 ## install: Install node dependencies
 .PHONY: install
+
+dist:
+	docker buildx build . -name plugin-zip
+	docker run -v .:/host plugin-zip
+
+
 install:
 	yarn install
 
@@ -37,6 +43,7 @@ run-dev: install build-dev
     -e GF_DEFAULT_APP_MODE=development \
     -p 3000:3000 \
     -v ${PWD}:/var/lib/grafana/plugins \
+    --name grafana \
     grafana/grafana:8.5.2
 
 ## clean: Clean build directory

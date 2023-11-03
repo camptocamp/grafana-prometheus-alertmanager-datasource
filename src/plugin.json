@@ -1,22 +1,19 @@
 {
-  "name": "Prometheus AlertManager",
-  "id": "camptocamp-prometheus-alertmanager-datasource",
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
+  "name": "Prometheus AlertManager Datasource",
+  "id": "camptocamp-prometheus-alertmanager-datasource",
   "metrics": true,
-  "annotations": false,
   "info": {
-    "description": "Prometheus AlertManager datasource",
-    "keywords": [
-      "prometheus",
-      "alertmanager"
-    ],
+    "description": "Grafana datasource for Prometheus AlertManager",
     "author": {
       "name": "Camptocamp",
       "url": "https://camptocamp.com"
     },
+    "keywords": ["datasource", "prometheus", "alertmanager"],
     "logos": {
-      "small": "img/json-logo.svg",
-      "large": "img/json-logo.svg"
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
     },
     "links": [
       {
@@ -42,7 +39,7 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=7.5.0",
+    "grafanaDependency": ">=10.0.3",
     "plugins": []
   }
 }

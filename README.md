@@ -2,7 +2,7 @@
 
 This datasource lets you use the Alertmanager's API of Prometheus to create dashboards in Grafana.
 
-![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/overview.png)
+![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/overview.png)
 
 # Usage
 
@@ -37,7 +37,7 @@ Whether the alerts gathered should be silenced.
 
 Whether the alerts gathered should be inhibited.
 
-![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/table.png)
+![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/table.png)
 
 # Panels
 
@@ -47,11 +47,11 @@ To use stat panels, you must apply a transformation to your metrics:
 
 1. Edit your panel and open the "Transform" tab.
 
-![Transform tab](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/singlestat-transform.png)
+![Transform tab](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/singlestat-transform.png)
 
 2. Select "Reduce" and change the "Calculations" to "Count"
 
-![Reduce transformation](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/img/singlestat-reduce.png)
+![Reduce transformation](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/singlestat-reduce.png)
 
 # Development Setup
 

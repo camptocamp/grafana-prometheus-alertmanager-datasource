@@ -2,11 +2,12 @@ import {
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
-  FieldType,
   MutableDataFrame,
+  FieldType,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
-import { GenericOptions, CustomQuery, QueryRequest, defaultQuery } from './types';
+import { lastValueFrom } from 'rxjs';
+import { GenericOptions, CustomQuery, QueryRequest, DEFAULT_QUERY } from './types';
 
 export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOptions> {
   url: string;
@@ -17,7 +18,6 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     super(instanceSettings);
 
     this.url = instanceSettings.url === undefined ? '' : instanceSettings.url;
-
     this.withCredentials = instanceSettings.withCredentials !== undefined;
     this.headers = { 'Content-Type': 'application/json' };
     if (typeof instanceSettings.basicAuth === 'string' && instanceSettings.basicAuth.length > 0) {
@@ -27,18 +27,15 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
 
   async query(options: QueryRequest): Promise<DataQueryResponse> {
     const promises = options.targets.map((query) => {
-      query = { ...defaultQuery, ...query };
+      query = { ...DEFAULT_QUERY, ...query };
       if (query.hide) {
         return Promise.resolve(new MutableDataFrame());
       }
 
       let params: string[] = [];
-      const queryActive = query.active ? 'true' : 'false';
-      const querySilenced = query.silenced ? 'true' : 'false';
-      const queryInhibited = query.inhibited ? 'true' : 'false';
-      params.push(`active=${queryActive}`);
-      params.push(`silenced=${querySilenced}`);
-      params.push(`inhibited=${queryInhibited}`);
+      params.push(`active=${query.active ? 'true' : 'false'}`);
+      params.push(`silenced=${query.silenced ? 'true' : 'false'}`);
+      params.push(`inhibited=${query.inhibited ? 'true' : 'false'}`);
       if (query.receiver !== undefined && query.receiver.length > 0) {
         params.push(`receiver=${query.receiver}`);
       }
@@ -52,7 +49,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const request = this.doRequest({
         url: `${this.url}/api/v2/alerts?${params.join('&')}`,
         method: 'GET',
-      }).then((request) => request.toPromise());
+      }).then((request) => lastValueFrom(request));
 
       return request.then((data: any) => this.retrieveData(query, data));
     });
@@ -62,12 +59,18 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     });
   }
 
+  async doRequest(options: any) {
+    options.withCredentials = this.withCredentials;
+    options.headers = this.headers;
+    return getBackendSrv().fetch(options);
+  }
+
   async testDatasource() {
     return this.doRequest({
       url: this.url,
       method: 'GET',
     }).then((response) =>
-      response.toPromise().then((data) => {
+      lastValueFrom(response).then((data) => {
         if (data !== undefined) {
           if (data.ok) {
             return { status: 'success', message: 'Datasource is working', title: 'Success' };
@@ -86,12 +89,6 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         };
       })
     );
-  }
-
-  async doRequest(options: any) {
-    options.withCredentials = this.withCredentials;
-    options.headers = this.headers;
-    return getBackendSrv().fetch(options);
   }
 
   buildDataFrame(refId: string, data: any): MutableDataFrame {
@@ -164,7 +161,6 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     }
 
     const escapedValues = value.map((val) => alertmanagerSpecialRegexEscape(val));
-
     if (escapedValues.length === 1) {
       return escapedValues[0];
     }

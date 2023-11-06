@@ -1,6 +1,5 @@
-import { DataQuery, DataQueryRequest, DataSourceJsonData } from '@grafana/data';
-
-export interface DataSourceOptions extends DataSourceJsonData {}
+import { DataSourceJsonData, DataQueryRequest } from '@grafana/data';
+import { DataQuery } from '@grafana/schema';
 
 export interface QueryRequest extends DataQueryRequest<CustomQuery> {
   adhocFilters?: any[];
@@ -15,8 +14,10 @@ export interface CustomQuery extends DataQuery {
   inhibited: boolean;
 }
 
-export const defaultQuery: Partial<CustomQuery> = {
+export const DEFAULT_QUERY: Partial<CustomQuery> = {
   active: true,
+  silenced: false,
+  inhibited: false,
 };
 
 export interface GenericOptions extends DataSourceJsonData {}

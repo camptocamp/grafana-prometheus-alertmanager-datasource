@@ -1,4 +1,4 @@
-NAME          := grafana-prometheus-alertmanager-datasource
+NAME          := camptocamp-prometheus-alertmanager-datasource
 VERSION       := $(shell git describe --tags --abbrev=0)
 
 ## install: Install node dependencies

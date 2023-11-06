@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.2.1...v2.0.0) (2023-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite plugin using React plugin framework ([#149](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/149))
+
+### Features
+
+* rewrite plugin using React plugin framework ([#149](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/149)) ([bfcf278](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/bfcf278634ce98108325c31379a9ff03df440151))
+
 ## [1.2.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v1.2.0...v1.2.1) (2022-06-07)
 
 

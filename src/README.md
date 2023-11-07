@@ -1,51 +1,63 @@
-<!-- This README file is going to be the one displayed on the Grafana.com website for your plugin. Uncomment and replace the content here before publishing.
+# Grafana datasource for Prometheus Alertmanager
 
-Remove any remaining comments before publishing as these may be displayed on Grafana.com -->
+This datasource lets you use the Alertmanager's API of Prometheus to create dashboards in Grafana.
 
-# Grafana Prometheus Alertmanager Datasource
+![Overview](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/overview.png)
 
-Grafana datasource for the prometheus alertmanager
+# Usage
 
-<!-- To help maximize the impact of your README and improve usability for users, we propose the following loose structure:
+## Query Editor
 
-**BEFORE YOU BEGIN**
-- Ensure all links are absolute URLs so that they will work when the README is displayed within Grafana and Grafana.com
-- Be inspired ✨
-  - [grafana-polystat-panel](https://github.com/grafana/grafana-polystat-panel)
-  - [volkovlabs-variable-panel](https://github.com/volkovlabs/volkovlabs-variable-panel)
+The following options are available:
 
-**ADD SOME BADGES**
+### Receiver
 
-Badges convey useful information at a glance for users whether in the Catalog or viewing the source code. You can use the generator on [Shields.io](https://shields.io/badges/dynamic-json-badge) together with the Grafana.com API
-to create dynamic badges that update automatically when you publish a new version to the marketplace.
+Only retrieve alerts that match the defined receiver. If left empty, all receivers will be matched.
 
-- For the logo field use 'grafana'.
-- Examples (label: query)
-  - Downloads: $.downloads
-  - Catalog Version: $.version
-  - Grafana Dependency: $.grafanaDependency
-  - Signature Type: $.versionSignatureType
+### Filters
 
-Full example: ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=$.version&url=https://grafana.com/api/plugins/grafana-polystat-panel&label=Marketplace&prefix=v&color=F47A20)
+Into the query expression field, you can set filters.
 
-Consider other [badges](https://shields.io/badges) as you feel appropriate for your project.
+Examples:
 
-## Overview / Introduction
-Provide one or more paragraphs as an introduction to your plugin to help users understand why they should use it.
+ - `alertname="HostDown"` will only display alerts which has the label *alertname* equals to "HostDown".
+ - `severity="1"` will only display alerts which has the label *severity* equals to "1".
 
-Consider including screenshots:
-- in [plugin.json](https://grafana.com/developers/plugin-tools/reference-plugin-json#info) include them as relative links.
-- in the README ensure they are absolute URLs.
+You can also set multiple filters like `alertname="DiskFull",df="opt"`.
 
-## Requirements
-List any requirements or dependencies they may need to run the plugin.
+### Active
 
-## Getting Started
-Provide a quick start on how to configure and use the plugin.
+Whether the alerts gathered should be active.
 
-## Documentation
-If your project has dedicated documentation available for users, provide links here. For help in following Grafana's style recommendations for technical documentation, refer to our [Writer's Toolkit](https://grafana.com/docs/writers-toolkit/).
+### Silenced
 
-## Contributing
-Do you want folks to contribute to the plugin or provide feedback through specific means? If so, tell them how!
--->
+Whether the alerts gathered should be silenced.
+
+### Inhibited
+
+Whether the alerts gathered should be inhibited.
+
+![Parameters](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/table.png)
+
+# Panels
+
+## Stat
+
+To use stat panels, you must apply a transformation to your metrics:
+
+1. Edit your panel and open the "Transform" tab.
+
+![Transform tab](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/singlestat-transform.png)
+
+2. Select "Reduce" and change the "Calculations" to "Count"
+
+![Reduce transformation](https://raw.githubusercontent.com/camptocamp/grafana-prometheus-alertmanager-datasource/master/src/img/singlestat-reduce.png)
+
+# Development Setup
+
+Usage of Yarn is encouraged to build.
+
+```shell
+$ yarn install
+$ yarn run build
+```

@@ -49,13 +49,13 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
       </InlineFieldRow>
       <InlineFieldRow>
         <InlineField label="Active">
-          <InlineSwitch checked={active} onChange={onActiveChange} />
+          <InlineSwitch value={active} onChange={onActiveChange} />
         </InlineField>
         <InlineField label="Silenced">
-          <InlineSwitch checked={silenced} onChange={onSilencedChange} />
+          <InlineSwitch value={silenced} onChange={onSilencedChange} />
         </InlineField>
         <InlineField label="Inhibited">
-          <InlineSwitch checked={inhibited} onChange={onInhibitedChange} />
+          <InlineSwitch value={inhibited} onChange={onInhibitedChange} />
         </InlineField>
       </InlineFieldRow>
     </div>

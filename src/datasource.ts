@@ -37,7 +37,8 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       params.push(`silenced=${query.silenced ? 'true' : 'false'}`);
       params.push(`inhibited=${query.inhibited ? 'true' : 'false'}`);
       if (query.receiver !== undefined && query.receiver.length > 0) {
-        params.push(`receiver=${query.receiver}`);
+        query.receiver = getTemplateSrv().replace(query.receiver, options.scopedVars, this.interpolateQueryExpr);
+        params.push(`receiver=${encodeURIComponent(query.receiver)}`);
       }
       if (query.filters !== undefined && query.filters.length > 0) {
         query.filters = getTemplateSrv().replace(query.filters, options.scopedVars, this.interpolateQueryExpr);

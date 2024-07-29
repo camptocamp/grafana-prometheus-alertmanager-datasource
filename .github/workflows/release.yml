@@ -3,7 +3,7 @@ name: Release workflow
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   release:
@@ -15,13 +15,13 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
       - name: Setup Go environment
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20'
+          go-version: "1.22"
 
       - name: Install dependencies
         run: yarn install --immutable --prefer-offline

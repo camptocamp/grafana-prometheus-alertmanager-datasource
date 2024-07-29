@@ -68,3 +68,8 @@ grafana
 
 # Binaries
 build/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+tests-examples/

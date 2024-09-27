@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.0.1...v2.1.0) (2024-09-27)
+
+
+### Features
+
+* interpolate receiver query param ([#157](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/157)) ([b2eeb6f](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/b2eeb6f61d37580e9af924cf21fceff1e3743c7c))
+
 ## [2.0.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.0.0...v2.0.1) (2024-07-25)
 
 

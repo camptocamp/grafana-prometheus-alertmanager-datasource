@@ -68,13 +68,13 @@ jobs:
         run: yarn playwright install --with-deps
 
       - name: Start grafana docker
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Run Playwright tests
         run: yarn playwright test
 
       - name: Stop grafana docker
-        run: docker-compose down
+        run: docker compose down
 
       - uses: actions/upload-artifact@v4
         if: always()

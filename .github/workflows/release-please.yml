@@ -5,16 +5,18 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - name: Release-please check
         id: release
-        uses: google-github-actions/release-please-action@v3
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: node
-          skip-github-release: true
-          changelog-path: CHANGELOG.md
-          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous Changes","hidden":false}]'
+          config-file: .github/release-please/.release-please-config.json
+          manifest-file: .github/release-please/.release-please-manifest.json

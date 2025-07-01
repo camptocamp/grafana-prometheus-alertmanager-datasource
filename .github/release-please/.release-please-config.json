@@ -12,5 +12,6 @@
       "release-type": "node"
     }
   },
-  "skip-github-release": true
+  "skip-github-release": false,
+  "draft": true
 }

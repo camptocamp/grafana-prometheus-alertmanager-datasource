@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.1.0...v2.2.0) (2025-07-01)
+
+
+### Features
+
+* update grafana plugin tools and support grafana 12 ([6fa4b7d](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/6fa4b7d4bb8d9a655283742f78324d1a92773f48))
+* upgrade to node 22 and update dependencies ([150db9c](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/150db9c15c50c8f9ff6797ed6934334e038d9ca3))
+
 ## [2.1.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.0.1...v2.1.0) (2024-09-27)
 
 

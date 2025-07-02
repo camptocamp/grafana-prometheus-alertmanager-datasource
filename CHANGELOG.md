@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.2.0...v3.0.0) (2025-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite plugin using React plugin framework ([#149](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/149))
+
+### Features
+
+* add doc to configure singlestat panel ([8c51289](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/8c5128940c2baf97ac4118461cb2684170d82a40))
+* add github actions for build process ([29a7494](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/29a7494d8ea864545612f1300970f3f80edb4698))
+* add numerical severity value on alerts ([#98](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/98)) ([ad98492](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/ad984928626f8e8348a136d17395e76058cca9fa))
+* display active alerts by default ([da31418](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/da31418b3aaf83931466656f1801f093491941b3))
+* interpolate receiver query param ([#157](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/157)) ([b2eeb6f](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/b2eeb6f61d37580e9af924cf21fceff1e3743c7c))
+* rewrite plugin using React plugin framework ([#149](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/149)) ([bfcf278](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/bfcf278634ce98108325c31379a9ff03df440151))
+* update grafana plugin tools and support grafana 12 ([6fa4b7d](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/6fa4b7d4bb8d9a655283742f78324d1a92773f48))
+* upgrade to node 22 and update dependencies ([150db9c](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/150db9c15c50c8f9ff6797ed6934334e038d9ca3))
+
+
+### Bug Fixes
+
+* 10, template variables single format ([111685e](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/111685ed46782fb2b9ac057b1a5c3347ee4361fb))
+* build workflow ([b4d72a7](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/b4d72a74782a572d91fc08356185ad65bf010030))
+* **ci:** remove package-lock.json ([db32e71](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/db32e712ee1c6151ddbc5be6032e3d198e3e9800))
+* **doc:** add missing images ([a26d316](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/a26d316a3067d72cc615937a683401ad9e0ed247))
+* invalid default switch values in queryeditor ([ae6f2e9](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/ae6f2e98ea77ba7128ad353d3b2e80a5af330394))
+* labels and annotations merged only from the first alert ([#118](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/118)) ([a49e90e](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/a49e90e3426738e9d62cda87155c8786cc727325))
+* Object(...) is not a function error ([da97b6f](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/da97b6f9ecca6577adede99b8619fe9b833e88b0))
+* remove data from datasource requests ([703ab37](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/703ab377ce31183d69545e7a6359749d4d00ecc3))
+* update dependencies to fix CVEs ([1694ee8](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/1694ee85814f94ca8ea7877b50b38a4c6dc0d60f))
+
+
+### Miscellaneous Changes
+
+* **master:** release 1.2.0 ([#128](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/128)) ([9f16634](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/9f16634c06c465fa7a8acc7531edc256f04645e4))
+* **master:** release 1.2.1 ([#131](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/131)) ([62be099](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/62be0995951c71add6c031c113d342207e2a5bf8))
+* **master:** release 2.0.0 ([#150](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/150)) ([41b8fad](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/41b8fad3ff9f737b06b72a1a37562ed05110d5f1))
+* **master:** release 2.0.1 ([fbd0315](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/fbd031535e5d21f43534572d6a758c3b3fb463ca))
+* **master:** release 2.1.0 ([#159](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/159)) ([db0cd46](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/db0cd4655d38e7cde15214c063061146e1fca07d))
+* **master:** release 2.2.0 ([#163](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/163)) ([40f1f7d](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/40f1f7db6be9c67cec4206669d83edafbdb4fcdd))
+* migrate from grafana/e2e to grafana/plugin-e2e ([1bc1dc7](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/1bc1dc7eb7d0e0e5f570371ee68935cc3650ae3b))
+* release 1.1.0 ([#126](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/126)) ([e0cecdb](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/e0cecdbc00c1e50370f25cacdc5a4efa29b28068))
+* set required grafana version to &gt;= 7.5.0 ([8830627](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/8830627e785791bc5f362d5dafe011e9f2192e65))
+* update .gitignore with vscode and build directories ([d350bb1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/d350bb107ff7d0400c6777e6477c004f05fd5d52))
+* update tslib dependency ([b420606](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/b4206069fefca48d9c2555e7bb6d50a2de33471f))
+* upgrade grafana dependencies to v8.5.2 ([2df0340](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/2df0340f88edf57997cc5b01f840b56f4587be69))
+* upgrade lodash to v4.17.21 ([913bb00](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/913bb0003507bf2946593106976d33d393bba93e))
+* upgrade lodash to v4.17.21 ([2df0340](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/2df0340f88edf57997cc5b01f840b56f4587be69))
+* upgrade tslib to v2.4.0 ([913bb00](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/913bb0003507bf2946593106976d33d393bba93e))
+
 ## [2.2.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.1.0...v2.2.0) (2025-07-01)
 
 

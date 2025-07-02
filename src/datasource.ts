@@ -126,6 +126,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         severityValue = 4;
         break;
       case 'high':
+      case 'error':
         severityValue = 3;
         break;
       case 'warning':

@@ -141,6 +141,26 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
 
     const row: string[] = [alert.startsAt, severityValue];
     fields.slice(2).forEach((element: any) => {
+      if (element.name === 'alertstatus') {
+        row.push(alert.status.state || '');
+        return;
+      }
+      if (element.name === 'alertstatus_code') {
+        switch (alert.status.state) {
+          case 'unprocessed':
+            row.push('0');
+            return;
+          case 'active':
+            row.push('1');
+            return;
+          case 'suppressed':
+            row.push('2');
+            return;
+          default:
+            row.push('');
+            return;
+        }
+      }
       row.push(alert.annotations[element.name] || alert.labels[element.name] || '');
     });
     return row;

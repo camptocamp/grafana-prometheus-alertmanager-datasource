@@ -1,6 +1,6 @@
 {
   "name": "camptocamp-prometheus-alertmanager-datasource",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Grafana datasource for the prometheus alertmanager",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.2.0...v2.3.0) (2025-10-03)
+
+
+### Features
+
+* restore alertstatus and alertstatus_code fields ([784fd8d](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/784fd8db733525bea7536440e04c0fc697b7d617))
+* support both error and high severity for level 3 ([651bdf4](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/651bdf4058cf22b2ec6035891e4a0bea1398fbf9))
+
+
+### Bug Fixes
+
+* restore high severity support ([#135](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/135)) ([c2f8bcd](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/c2f8bcd45ed39a49baf5933989a6304b6d7a1ecb))
+* return timestamp in unix epoch format instead of ISO [#168](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/168) ([#169](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/issues/169)) ([1180b95](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/1180b95bfbd7a3b8b9880d11a770f82f155b7dfc))
+
 ## [2.2.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.1.0...v2.2.0) (2025-07-01)
 
 

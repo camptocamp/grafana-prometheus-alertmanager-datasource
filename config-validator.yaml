@@ -1,0 +1,9 @@
+global:
+  enabled: true
+  severity: warning
+  jsonOutput: false
+  reportAll: false
+
+analyzers:
+  metadatavalid:
+    enabled: false

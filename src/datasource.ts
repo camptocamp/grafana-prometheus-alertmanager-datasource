@@ -119,7 +119,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return frame;
   }
 
-  parseAlertAttributes(alert: any, fields: any[]): string[] {
+  parseAlertAttributes(alert: any, fields: any[]): Array<string | number> {
     let severityValue = 0;
     switch (alert.labels['severity']) {
       case 'critical':
@@ -139,7 +139,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         break;
     }
 
-    const row: string[] = [alert.startsAt, severityValue];
+    const row: Array<string | number> = [Date.parse(alert.startsAt), severityValue];
     fields.slice(2).forEach((element: any) => {
       if (element.name === 'alertstatus') {
         row.push(alert.status.state || '');
@@ -169,7 +169,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   retrieveData(query: any, data: any): Promise<MutableDataFrame> {
     const frame = this.buildDataFrame(query.refId, data.data);
     data.data.forEach((alert: any) => {
-      const row: string[] = this.parseAlertAttributes(alert, frame.fields);
+      const row: Array<string | number> = this.parseAlertAttributes(alert, frame.fields);
       frame.appendRow(row);
     });
     return Promise.resolve(frame);

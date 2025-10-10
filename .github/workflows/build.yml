@@ -13,9 +13,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Install OSV-Scanner
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget
+          sudo wget -qO /usr/local/bin/osv-scanner https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
+          sudo chmod +x /usr/local/bin/osv-scanner
 
       - name: Enable Corepack
         run: corepack enable
@@ -50,7 +58,6 @@ jobs:
           fi
 
       - name: Setup Go environment
-        if: steps.check-for-backend.outputs.has-backend == 'true'
         uses: actions/setup-go@v3
         with:
           go-version: "1.22"
@@ -71,6 +78,43 @@ jobs:
 
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
+
+      - name: Sign plugin
+        run: yarn run sign
+        if: ${{ env.GRAFANA_ACCESS_POLICY_TOKEN != '' }}
+
+      - name: Get plugin metadata
+        id: metadata
+        run: |
+          sudo apt-get install jq
+
+          export GRAFANA_PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
+          export GRAFANA_PLUGIN_VERSION=$(cat dist/plugin.json | jq -r .info.version)
+          export GRAFANA_PLUGIN_TYPE=$(cat dist/plugin.json | jq -r .type)
+          export GRAFANA_PLUGIN_ARTIFACT=${GRAFANA_PLUGIN_ID}-${GRAFANA_PLUGIN_VERSION}.zip
+          export GRAFANA_PLUGIN_ARTIFACT_CHECKSUM=${GRAFANA_PLUGIN_ARTIFACT}.md5
+
+          echo "plugin-id=${GRAFANA_PLUGIN_ID}" >> $GITHUB_OUTPUT
+          echo "plugin-version=${GRAFANA_PLUGIN_VERSION}" >> $GITHUB_OUTPUT
+          echo "plugin-type=${GRAFANA_PLUGIN_TYPE}" >> $GITHUB_OUTPUT
+          echo "archive=${GRAFANA_PLUGIN_ARTIFACT}" >> $GITHUB_OUTPUT
+          echo "archive-checksum=${GRAFANA_PLUGIN_ARTIFACT_CHECKSUM}" >> $GITHUB_OUTPUT
+
+          echo "github-tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+
+      - name: Package plugin
+        id: package-plugin
+        run: |
+          mv dist ${{ steps.metadata.outputs.plugin-id }}
+          zip ${{ steps.metadata.outputs.archive }} ${{ steps.metadata.outputs.plugin-id }} -r
+
+      - name: Validate plugin
+        run: |
+          git clone https://github.com/grafana/plugin-validator
+          pushd ./plugin-validator/pkg/cmd/plugincheck2
+          go install
+          popd
+          plugincheck2 -config ./config-validator.yaml -sourceCodeUri file://. ${{ steps.metadata.outputs.archive }}
 
       - name: Start grafana docker
         run: docker compose up -d

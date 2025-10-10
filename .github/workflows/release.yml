@@ -28,7 +28,13 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install dependencies
+      - name: Install OSV-Scanner
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget
+          sudo wget -qO /usr/local/bin/osv-scanner https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
+          sudo chmod +x /usr/local/bin/osv-scanner
+
+      - name: Install Node dependencies
         run: yarn install --immutable
 
       - name: Build and test frontend
@@ -108,7 +114,7 @@ jobs:
           pushd ./plugin-validator/pkg/cmd/plugincheck2
           go install
           popd
-          plugincheck2 -config ./config-validator.yaml ${{ steps.metadata.outputs.archive }}
+          plugincheck2 -config ./config-validator.yaml -sourceCodeUri file://. ${{ steps.metadata.outputs.archive }}
 
       - name: Create Github release
         uses: softprops/action-gh-release@v1

@@ -2,15 +2,10 @@ version: '3.0'
 
 services:
   grafana:
-    container_name: 'camptocamp-prometheus-alertmanager-datasource'
     platform: 'linux/amd64'
     build:
-      context: ./.config
       args:
-        grafana_image: ${GRAFANA_IMAGE:-grafana-enterprise}
         grafana_version: ${GRAFANA_VERSION:-12.0.0}
-    ports:
-      - 3000:3000/tcp
-    volumes:
-      - ./dist:/var/lib/grafana/plugins/camptocamp-prometheus-alertmanager-datasource
-      - ./provisioning:/etc/grafana/provisioning
+    extends:
+      file: .config/docker-compose-base.yaml
+      service: grafana

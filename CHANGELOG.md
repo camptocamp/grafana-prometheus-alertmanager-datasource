@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.3.0...v2.3.1) (2025-11-05)
+
+
+### Bug Fixes
+
+* update dependencies and node to v24 ([85398d5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/85398d59cb8a01708259a04c7edf09051fdff2cf))
+* use onChange event to update filters states ([bdd26a0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/bdd26a06e449b1a4d376158fcbee1bd934ab55ae))
+
+
+### Miscellaneous Changes
+
+* **makefile:** fix directory already exists error for release target ([3f2001c](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/3f2001ca2c1d6ec27ab5dc13cda0c8ab0d802822))
+* **makefile:** use latest grafana image for dev container ([97bd6b3](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/97bd6b39b1f1b67ea772da4dec8a421d2b7cf293))
+* update project build tooling ([d8658a5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/d8658a598f3de30b1d8d94d7380c96cfb736f18d))
+
 ## [2.3.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.2.0...v2.3.0) (2025-10-03)
 
 

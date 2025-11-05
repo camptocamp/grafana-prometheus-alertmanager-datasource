@@ -31,13 +31,13 @@ release: install build sign
 	rm -r camptocamp-prometheus-alertmanager-datasource
 
 ## run-dev: Build and run Docker dev container on port 3000
-.PHONY: run-dev-container
-run-dev-container: install build
+.PHONY: run-dev
+run-dev: install build
 	docker run -d \
     -e GF_DEFAULT_APP_MODE=development \
     -p 3000:3000 \
     -v ${PWD}:/var/lib/grafana/plugins \
-    grafana/grafana:12.0.0
+    grafana/grafana:latest
 
 ## clean: Clean build directory
 .PHONY: clean

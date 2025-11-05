@@ -18,20 +18,17 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   };
 
   const onActiveChange = () => {
-    query.active = !query.active;
-    onChange({ ...query });
+    onChange({ ...query, active: !query.active });
     onRunQuery();
   };
 
   const onSilencedChange = () => {
-    query.silenced = !query.silenced;
-    onChange({ ...query });
+    onChange({ ...query, silenced: !query.silenced });
     onRunQuery();
   };
 
   const onInhibitedChange = () => {
-    query.inhibited = !query.inhibited;
-    onChange({ ...query });
+    onChange({ ...query, inhibited: !query.inhibited });
     onRunQuery();
   };
 

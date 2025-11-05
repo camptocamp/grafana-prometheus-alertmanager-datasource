@@ -24,7 +24,7 @@ sign:
 ## release: Make a release of the plugin
 .PHONY: release
 release: install build sign
-	mkdir build
+	mkdir -p build
 	mv dist/ camptocamp-prometheus-alertmanager-datasource
 	zip -r build/camptocamp-prometheus-alertmanager-datasource-${VERSION}.zip ./camptocamp-prometheus-alertmanager-datasource
 	md5sum build/camptocamp-prometheus-alertmanager-datasource-${VERSION}.zip > build/camptocamp-prometheus-alertmanager-datasource-${VERSION}.zip.md5

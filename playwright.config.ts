@@ -51,7 +51,7 @@ export default defineConfig<PluginOptions>({
         storageState: 'playwright/.auth/admin.json',
       },
       dependencies: ['auth'],
-    }
+    },
   ],
 
   /* Run your local dev server before starting the tests */

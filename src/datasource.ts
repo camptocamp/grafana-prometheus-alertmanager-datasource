@@ -2,7 +2,8 @@ import {
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
-  MutableDataFrame,
+  PartialDataFrame,
+  DataFrame,
   FieldType,
 } from '@grafana/data';
 import { getBackendSrv, getTemplateSrv } from '@grafana/runtime';
@@ -29,7 +30,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     const promises = options.targets.map((query) => {
       query = { ...DEFAULT_QUERY, ...query };
       if (query.hide) {
-        return Promise.resolve(new MutableDataFrame());
+        return Promise.resolve({ refId: query.refId, fields: [], length: 0 } as DataFrame);
       }
 
       let params: string[] = [];
@@ -92,10 +93,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     );
   }
 
-  buildDataFrame(refId: string, data: any): MutableDataFrame {
+  buildDataFrame(refId: string, data: any): PartialDataFrame {
     const fields = [
-      { name: 'Time', type: FieldType.time },
-      { name: 'SeverityValue', type: FieldType.number },
+      { name: 'Time', type: FieldType.time, values: [] },
+      { name: 'SeverityValue', type: FieldType.number, values: [] },
     ];
 
     if (data.length > 0) {
@@ -108,14 +109,14 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         fields.push({
           name: attribute,
           type: FieldType.string,
+          values: [],
         });
       });
     }
-
-    const frame = new MutableDataFrame({
+    const frame: PartialDataFrame = {
       refId: refId,
       fields: fields,
-    });
+    };
     return frame;
   }
 
@@ -166,13 +167,15 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
     return row;
   }
 
-  retrieveData(query: any, data: any): Promise<MutableDataFrame> {
+  retrieveData(query: any, data: any): Promise<DataFrame> {
     const frame = this.buildDataFrame(query.refId, data.data);
     data.data.forEach((alert: any) => {
       const row: Array<string | number> = this.parseAlertAttributes(alert, frame.fields);
-      frame.appendRow(row);
+      frame.fields.forEach((field: any, index: number) => {
+        field.values.push(row[index]);
+      });
     });
-    return Promise.resolve(frame);
+    return Promise.resolve(frame as DataFrame);
   }
 
   interpolateQueryExpr(value: string | string[] = [], variable: any) {

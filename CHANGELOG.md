@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.3.1...v2.4.0) (2026-02-23)
+
+
+### Features
+
+* **config:** migrate ConfigEditor to @grafana/plugin-ui components ([22ecfa5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/22ecfa516dc45e6269250f403800cc2b3ec8bad5))
+
+
+### Bug Fixes
+
+* **datasource:** replace MutableDataFrame with PartialDataFrame/DataFrame ([d74d016](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/d74d0161fbe87763fe5d9130d2f7c5b9293bb4fc))
+* **playwright:** remove trailing semicolon in config ([7d1c609](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/7d1c609db3b1320b3c11bc6199ea23b79b831d32))
+
+
+### Miscellaneous Changes
+
+* **deps:** add @grafana/plugin-ui and peer dependencies ([539b9c0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/539b9c00440cda7c054497ced09503e7e99e9f44))
+* **deps:** update yarn.lock with new dependency resolutions ([04402d1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/04402d1d067b20b6b8cfdc36ab840082f66a55d5))
+
 ## [2.3.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.3.0...v2.3.1) (2025-11-05)
 
 

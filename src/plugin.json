@@ -4,6 +4,7 @@
   "name": "Prometheus AlertManager Datasource",
   "id": "camptocamp-prometheus-alertmanager-datasource",
   "metrics": true,
+  "annotations": true,
   "info": {
     "description": "Grafana datasource for Prometheus AlertManager",
     "author": {

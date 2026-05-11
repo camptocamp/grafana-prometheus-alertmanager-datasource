@@ -463,25 +463,60 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
   getSilenceAnnotationColor(state: string): string {
     switch (state) {
       case 'active':
-        return 'rgba(229, 84, 84, 0.9)';
+        return 'rgba(229, 84, 84, 0.25)';
       case 'pending':
-        return 'rgba(87, 148, 242, 0.9)';
+        return 'rgba(87, 148, 242, 0.25)';
       case 'expired':
-        return 'rgba(115, 125, 140, 0.8)';
+        return 'rgba(115, 125, 140, 0.15)';
       default:
-        return 'rgba(255, 152, 0, 0.9)';
+        return 'rgba(255, 152, 0, 0.25)';
     }
   }
 
-  buildSilenceAnnotationTitle(state: string, comment: string): string {
-    const titlePrefix = state.length > 0 ? `Silence ${state}` : 'Silence';
-    const normalizedComment = comment.trim();
-    if (normalizedComment.length === 0) {
-      return titlePrefix;
+  buildSilenceAnnotationTitle(state: string, matchers: string, comment: string): string {
+    const stateLabel = state.length > 0 ? state : 'unknown';
+    const parts: string[] = [`Silence (${stateLabel})`];
+
+    if (matchers.length > 0) {
+      const truncatedMatchers = matchers.length > 60 ? `${matchers.slice(0, 57)}...` : matchers;
+      parts.push(truncatedMatchers);
     }
 
-    const truncatedComment = normalizedComment.length > 64 ? `${normalizedComment.slice(0, 61)}...` : normalizedComment;
-    return `${titlePrefix}: ${truncatedComment}`;
+    const normalizedComment = comment.trim();
+    if (normalizedComment.length > 0) {
+      const maxCommentLen = Math.max(20, 100 - parts.join(' — ').length);
+      const truncatedComment =
+        normalizedComment.length > maxCommentLen
+          ? `${normalizedComment.slice(0, maxCommentLen - 3)}...`
+          : normalizedComment;
+      parts.push(truncatedComment);
+    }
+
+    return parts.join(' — ');
+  }
+
+  formatDurationHuman(durationMs: number): string {
+    if (durationMs < 0) {
+      return '0s';
+    }
+
+    const totalSeconds = Math.floor(durationMs / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    const parts: string[] = [];
+    if (days > 0) {
+      parts.push(`${days}d`);
+    }
+    if (hours > 0) {
+      parts.push(`${hours}h`);
+    }
+    if (minutes > 0 || parts.length === 0) {
+      parts.push(`${minutes}m`);
+    }
+
+    return parts.join(' ');
   }
 
   silenceFramesToAnnotationEvents(frames: DataFrame[]): AnnotationEvent[] {
@@ -495,6 +530,7 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
       const commentField = frame.fields.find((field) => field.name === 'Comment');
       const matchersField = frame.fields.find((field) => field.name === 'Matchers');
       const tagsField = frame.fields.find((field) => field.name === 'Tags');
+      const durationField = frame.fields.find((field) => field.name === 'DurationMs');
 
       if (startsAtField === undefined || endsAtField === undefined) {
         return;
@@ -509,9 +545,10 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         }
 
         const state = String(this.getFieldValueAtIndex(stateField, index) ?? '');
-        const createdBy = this.getFieldValueAtIndex(createdByField, index) ?? '';
+        const createdBy = String(this.getFieldValueAtIndex(createdByField, index) ?? '');
         const comment = String(this.getFieldValueAtIndex(commentField, index) ?? '');
-        const matchers = this.getFieldValueAtIndex(matchersField, index) ?? '';
+        const matchers = String(this.getFieldValueAtIndex(matchersField, index) ?? '');
+        const durationMs = Number(this.getFieldValueAtIndex(durationField, index) ?? 0);
         const tagValues = String(this.getFieldValueAtIndex(tagsField, index) ?? '')
           .split(',')
           .map((tag) => tag.trim())
@@ -522,25 +559,32 @@ export class AlertmanagerDataSource extends DataSourceApi<CustomQuery, GenericOp
         }
         annotationTags.push(...tagValues.slice(0, 8));
 
-        const textParts: string[] = [];
+        const htmlParts: string[] = ['<div style="max-width:400px;font-size:13px">'];
+        if (state.length > 0) {
+          htmlParts.push(`<div><strong>State:</strong> ${state}</div>`);
+        }
+        if (matchers.length > 0) {
+          htmlParts.push(`<div><strong>Matchers:</strong> <code>${matchers}</code></div>`);
+        }
         if (comment.trim().length > 0) {
-          textParts.push(comment.trim());
-        } else {
-          textParts.push('No comment');
+          htmlParts.push(`<div><strong>Comment:</strong> ${comment.trim()}</div>`);
         }
-        if (String(createdBy).length > 0) {
-          textParts.push(`Created by: ${createdBy}`);
+        if (createdBy.length > 0) {
+          htmlParts.push(`<div><strong>Created by:</strong> ${createdBy}</div>`);
         }
-        if (String(matchers).length > 0) {
-          textParts.push(`Matchers: ${matchers}`);
+        if (Number.isFinite(durationMs) && durationMs > 0) {
+          htmlParts.push(
+            `<div style="color:#888;font-size:0.9em;margin-top:2px">Duration: ${this.formatDurationHuman(durationMs)}</div>`
+          );
         }
+        htmlParts.push('</div>');
 
         events.push({
           time: startAtValue,
           timeEnd: endAtValue,
           isRegion: true,
-          title: this.buildSilenceAnnotationTitle(state, comment),
-          text: textParts.join('\n'),
+          title: this.buildSilenceAnnotationTitle(state, matchers, comment),
+          text: htmlParts.join(''),
           tags: [...new Set(annotationTags)],
           color: this.getSilenceAnnotationColor(state),
         });

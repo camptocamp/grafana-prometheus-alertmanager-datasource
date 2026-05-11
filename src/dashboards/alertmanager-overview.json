@@ -26,7 +26,7 @@
         },
         "enable": true,
         "hide": false,
-        "iconColor": "rgba(255, 145, 89, 1)",
+        "iconColor": "rgba(255, 145, 89, 0.8)",
         "name": "Alertmanager Silences",
         "target": {
           "queryType": "silences",
@@ -37,14 +37,15 @@
       }
     ]
   },
+  "description": "Operational overview of Prometheus Alertmanager: active alerts, silences, severity distribution, and timeline with silence annotations.",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
+  "graphTooltip": 2,
   "links": [
     {
       "icon": "external link",
       "targetBlank": true,
-      "title": "Project repository",
+      "title": "Plugin Repository",
       "type": "link",
       "url": "https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource"
     }
@@ -52,44 +53,38 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "panels": [],
+      "title": "Alert Overview",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "camptocamp-prometheus-alertmanager-datasource",
         "uid": "$datasource"
       },
-      "description": "Number of active critical alerts matching the current filters.",
+      "description": "Total number of currently firing alerts (not silenced or inhibited) matching the filters.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 5
-              }
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 15 }
             ]
           },
           "unit": "none"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 0
-      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
       "id": 1,
       "options": {
         "colorMode": "background",
@@ -98,7 +93,62 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": ["count"],
-          "fields": "SeverityValue",
+          "fields": "/SeverityValue/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "active": true,
+          "datasource": {
+            "type": "camptocamp-prometheus-alertmanager-datasource",
+            "uid": "$datasource"
+          },
+          "filters": "$alert_filters",
+          "inhibited": false,
+          "queryType": "alerts",
+          "receiver": "$receiver",
+          "refId": "A",
+          "silenced": false
+        }
+      ],
+      "title": "Total Firing",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "camptocamp-prometheus-alertmanager-datasource",
+        "uid": "$datasource"
+      },
+      "description": "Number of active critical alerts matching the current filters.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["count"],
+          "fields": "/SeverityValue/",
           "values": false
         },
         "textMode": "value"
@@ -118,7 +168,7 @@
           "silenced": false
         }
       ],
-      "title": "Critical Alerts",
+      "title": "Critical",
       "type": "stat"
     },
     {
@@ -129,38 +179,23 @@
       "description": "Number of active warning alerts matching the current filters.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 1
-              },
-              {
-                "color": "orange",
-                "value": 10
-              }
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "orange", "value": 10 }
             ]
           },
           "unit": "none"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "id": 2,
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 3,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -168,7 +203,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": ["count"],
-          "fields": "SeverityValue",
+          "fields": "/SeverityValue/",
           "values": false
         },
         "textMode": "value"
@@ -188,7 +223,62 @@
           "silenced": false
         }
       ],
-      "title": "Warning Alerts",
+      "title": "Warning",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "camptocamp-prometheus-alertmanager-datasource",
+        "uid": "$datasource"
+      },
+      "description": "Alerts currently silenced or inhibited.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "purple", "value": 1 },
+              { "color": "dark-purple", "value": 10 }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["count"],
+          "fields": "/SeverityValue/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "active": false,
+          "datasource": {
+            "type": "camptocamp-prometheus-alertmanager-datasource",
+            "uid": "$datasource"
+          },
+          "filters": "$alert_filters",
+          "inhibited": true,
+          "queryType": "alerts",
+          "receiver": "$receiver",
+          "refId": "A",
+          "silenced": true
+        }
+      ],
+      "title": "Suppressed",
       "type": "stat"
     },
     {
@@ -199,38 +289,23 @@
       "description": "Number of active silences overlapping the current time range.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 5
-              }
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 5 }
             ]
           },
           "unit": "none"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 0
-      },
-      "id": 3,
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 5,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -238,7 +313,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": ["count"],
-          "fields": "DurationMs",
+          "fields": "/DurationMs/",
           "values": false
         },
         "textMode": "value"
@@ -266,38 +341,23 @@
       "description": "Number of pending silences overlapping the current time range.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "blue",
-                "value": 1
-              },
-              {
-                "color": "violet",
-                "value": 5
-              }
+              { "color": "green", "value": null },
+              { "color": "blue", "value": 1 },
+              { "color": "dark-blue", "value": 5 }
             ]
           },
           "unit": "none"
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "id": 4,
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 6,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -305,7 +365,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": ["count"],
-          "fields": "DurationMs",
+          "fields": "/DurationMs/",
           "values": false
         },
         "textMode": "value"
@@ -326,21 +386,27 @@
       "type": "stat"
     },
     {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 200,
+      "panels": [],
+      "title": "Timeline & Distribution",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "camptocamp-prometheus-alertmanager-datasource",
         "uid": "$datasource"
       },
-      "description": "Alert events over time with severity-coded points. Silence annotations are rendered as colored regions for maintenance context.",
+      "description": "Alert events over time with severity-coded points. Silence annotations are rendered as transparent colored regions for maintenance context.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "custom": {
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Severity (1 info - 4 critical)",
+            "axisLabel": "Severity",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "points",
@@ -354,10 +420,8 @@
             "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 0,
-            "pointSize": 7,
-            "scaleDistribution": {
-              "type": "linear"
-            },
+            "pointSize": 9,
+            "scaleDistribution": { "type": "linear" },
             "showPoints": "always",
             "spanNulls": false,
             "stacking": {
@@ -368,22 +432,10 @@
           "mappings": [
             {
               "options": {
-                "1": {
-                  "index": 0,
-                  "text": "info"
-                },
-                "2": {
-                  "index": 1,
-                  "text": "warning"
-                },
-                "3": {
-                  "index": 2,
-                  "text": "error"
-                },
-                "4": {
-                  "index": 3,
-                  "text": "critical"
-                }
+                "1": { "index": 0, "text": "info" },
+                "2": { "index": 1, "text": "warning" },
+                "3": { "index": 2, "text": "error" },
+                "4": { "index": 3, "text": "critical" }
               },
               "type": "value"
             }
@@ -393,52 +445,26 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "blue",
-                "value": 1
-              },
-              {
-                "color": "yellow",
-                "value": 2
-              },
-              {
-                "color": "orange",
-                "value": 3
-              },
-              {
-                "color": "red",
-                "value": 4
-              }
+              { "color": "blue", "value": null },
+              { "color": "blue", "value": 1 },
+              { "color": "yellow", "value": 2 },
+              { "color": "orange", "value": 3 },
+              { "color": "red", "value": 4 }
             ]
           },
           "unit": "none"
         },
         "overrides": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "SeverityValue"
-            },
+            "matcher": { "id": "byName", "options": "SeverityValue" },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "Severity"
-              }
+              { "id": "displayName", "value": "Severity" }
             ]
           }
         ]
       },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      },
-      "id": 5,
+      "gridPos": { "h": 10, "w": 16, "x": 0, "y": 6 },
+      "id": 7,
       "options": {
         "legend": {
           "calcs": ["count"],
@@ -448,7 +474,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "targets": [
@@ -493,17 +519,113 @@
         "type": "camptocamp-prometheus-alertmanager-datasource",
         "uid": "$datasource"
       },
+      "description": "Distribution of all alerts (active, silenced, inhibited) by severity level.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "critical" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "error" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "warning" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "info" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 6 },
+      "id": 8,
+      "options": {
+        "displayLabels": ["name", "value"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": ["value", "percent"]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/SeverityValue/",
+          "values": true
+        },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "active": true,
+          "datasource": {
+            "type": "camptocamp-prometheus-alertmanager-datasource",
+            "uid": "$datasource"
+          },
+          "filters": "$alert_filters",
+          "inhibited": true,
+          "queryType": "alerts",
+          "receiver": "$receiver",
+          "refId": "A",
+          "silenced": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "severity": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "SeverityValue": {
+                "aggregations": ["count"],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "title": "Severity Distribution",
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
+      "id": 300,
+      "panels": [],
+      "title": "Details",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "camptocamp-prometheus-alertmanager-datasource",
+        "uid": "$datasource"
+      },
       "description": "Detailed list of alerts matching selected receiver and filters.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
+            "cellOptions": { "type": "auto" },
+            "filterable": false,
             "inspect": false
           },
           "mappings": [],
@@ -511,56 +633,30 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
+              { "color": "green", "value": null },
+              { "color": "red", "value": 80 }
             ]
           }
         },
         "overrides": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "severity"
-            },
+            "matcher": { "id": "byName", "options": "severity" },
             "properties": [
               {
                 "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
+                "value": { "mode": "gradient", "type": "color-background" }
               },
+              { "id": "custom.filterable", "value": true },
+              { "id": "custom.width", "value": 100 },
               {
                 "id": "mappings",
                 "value": [
                   {
                     "options": {
-                      "critical": {
-                        "color": "red",
-                        "index": 0,
-                        "text": "critical"
-                      },
-                      "error": {
-                        "color": "orange",
-                        "index": 1,
-                        "text": "error"
-                      },
-                      "info": {
-                        "color": "blue",
-                        "index": 2,
-                        "text": "info"
-                      },
-                      "warning": {
-                        "color": "yellow",
-                        "index": 3,
-                        "text": "warning"
-                      }
+                      "critical": { "color": "red", "index": 0, "text": "critical" },
+                      "error": { "color": "orange", "index": 1, "text": "error" },
+                      "info": { "color": "blue", "index": 2, "text": "info" },
+                      "warning": { "color": "yellow", "index": 3, "text": "warning" }
                     },
                     "type": "value"
                   }
@@ -569,38 +665,22 @@
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "status"
-            },
+            "matcher": { "id": "byName", "options": "status" },
             "properties": [
               {
                 "id": "custom.cellOptions",
-                "value": {
-                  "mode": "color-background",
-                  "type": "color-background"
-                }
+                "value": { "mode": "color-background", "type": "color-background" }
               },
+              { "id": "custom.filterable", "value": true },
+              { "id": "custom.width", "value": 120 },
               {
                 "id": "mappings",
                 "value": [
                   {
                     "options": {
-                      "active": {
-                        "color": "red",
-                        "index": 0,
-                        "text": "active"
-                      },
-                      "suppressed": {
-                        "color": "yellow",
-                        "index": 1,
-                        "text": "suppressed"
-                      },
-                      "unprocessed": {
-                        "color": "blue",
-                        "index": 2,
-                        "text": "unprocessed"
-                      }
+                      "active": { "color": "red", "index": 0, "text": "active" },
+                      "suppressed": { "color": "yellow", "index": 1, "text": "suppressed" },
+                      "unprocessed": { "color": "blue", "index": 2, "text": "unprocessed" }
                     },
                     "type": "value"
                   }
@@ -609,88 +689,52 @@
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "SeverityValue"
-            },
+            "matcher": { "id": "byName", "options": "SeverityValue" },
             "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
+              { "id": "custom.hidden", "value": true }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "alertstatus_code"
-            },
+            "matcher": { "id": "byName", "options": "alertstatus_code" },
             "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
+              { "id": "custom.hidden", "value": true }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
+            "matcher": { "id": "byName", "options": "Time" },
             "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              }
+              { "id": "unit", "value": "dateTimeAsIso" },
+              { "id": "custom.width", "value": 170 }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "summary"
-            },
+            "matcher": { "id": "byName", "options": "summary" },
             "properties": [
-              {
-                "id": "custom.width",
-                "value": 420
-              }
+              { "id": "custom.width", "value": 400 }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "alertname"
-            },
+            "matcher": { "id": "byName", "options": "alertname" },
             "properties": [
-              {
-                "id": "custom.width",
-                "value": 220
-              }
+              { "id": "custom.width", "value": 200 },
+              { "id": "custom.filterable", "value": true }
             ]
           }
         ]
       },
-      "gridPos": {
-        "h": 12,
-        "w": 15,
-        "x": 0,
-        "y": 12
-      },
-      "id": 6,
+      "gridPos": { "h": 13, "w": 14, "x": 0, "y": 17 },
+      "id": 9,
       "options": {
         "cellHeight": "sm",
         "footer": {
-          "countRows": false,
+          "countRows": true,
           "fields": "",
-          "reducer": ["sum"],
-          "show": false
+          "reducer": ["count"],
+          "show": true
         },
         "showHeader": true,
         "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Time"
-          }
+          { "desc": true, "displayName": "Time" }
         ]
       },
       "targets": [
@@ -716,9 +760,9 @@
             "excludeByName": {},
             "indexByName": {
               "Time": 0,
-              "alertstatus": 1,
+              "alertname": 1,
               "severity": 2,
-              "alertname": 3,
+              "alertstatus": 3,
               "summary": 4,
               "service": 5,
               "instance": 6
@@ -741,72 +785,37 @@
         "defaults": {
           "custom": {
             "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
+            "cellOptions": { "type": "auto" },
+            "filterable": false,
             "inspect": false
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
+              { "color": "green", "value": null },
+              { "color": "red", "value": 80 }
             ]
           }
         },
         "overrides": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "DurationMs"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "ms"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "State"
-            },
+            "matcher": { "id": "byName", "options": "State" },
             "properties": [
               {
                 "id": "custom.cellOptions",
-                "value": {
-                  "mode": "color-background",
-                  "type": "color-background"
-                }
+                "value": { "mode": "color-background", "type": "color-background" }
               },
+              { "id": "custom.filterable", "value": true },
+              { "id": "custom.width", "value": 100 },
               {
                 "id": "mappings",
                 "value": [
                   {
                     "options": {
-                      "active": {
-                        "color": "red",
-                        "index": 0,
-                        "text": "active"
-                      },
-                      "expired": {
-                        "color": "green",
-                        "index": 1,
-                        "text": "expired"
-                      },
-                      "pending": {
-                        "color": "blue",
-                        "index": 2,
-                        "text": "pending"
-                      }
+                      "active": { "color": "red", "index": 0, "text": "active" },
+                      "expired": { "color": "green", "index": 1, "text": "expired" },
+                      "pending": { "color": "blue", "index": 2, "text": "pending" }
                     },
                     "type": "value"
                   }
@@ -815,76 +824,78 @@
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "StartsAt"
-            },
+            "matcher": { "id": "byName", "options": "Matchers" },
             "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              }
+              { "id": "custom.width", "value": 260 }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "EndsAt"
-            },
+            "matcher": { "id": "byName", "options": "Comment" },
             "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              }
+              { "id": "custom.width", "value": 300 }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "UpdatedAt"
-            },
+            "matcher": { "id": "byName", "options": "CreatedBy" },
             "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              }
+              { "id": "custom.filterable", "value": true }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Comment"
-            },
+            "matcher": { "id": "byName", "options": "StartsAt" },
             "properties": [
-              {
-                "id": "custom.width",
-                "value": 360
-              }
+              { "id": "unit", "value": "dateTimeAsIso" },
+              { "id": "custom.width", "value": 160 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "EndsAt" },
+            "properties": [
+              { "id": "unit", "value": "dateTimeAsIso" },
+              { "id": "custom.width", "value": 160 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "DurationMs" },
+            "properties": [
+              { "id": "unit", "value": "ms" },
+              { "id": "displayName", "value": "Duration" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "UpdatedAt" },
+            "properties": [
+              { "id": "unit", "value": "dateTimeAsIso" },
+              { "id": "custom.hidden", "value": true }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ID" },
+            "properties": [
+              { "id": "custom.hidden", "value": true }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Tags" },
+            "properties": [
+              { "id": "custom.hidden", "value": true }
             ]
           }
         ]
       },
-      "gridPos": {
-        "h": 12,
-        "w": 9,
-        "x": 15,
-        "y": 12
-      },
-      "id": 7,
+      "gridPos": { "h": 13, "w": 10, "x": 14, "y": 17 },
+      "id": 10,
       "options": {
         "cellHeight": "sm",
         "footer": {
-          "countRows": false,
+          "countRows": true,
           "fields": "",
-          "reducer": ["sum"],
-          "show": false
+          "reducer": ["count"],
+          "show": true
         },
         "showHeader": true,
         "sortBy": [
-          {
-            "desc": true,
-            "displayName": "StartsAt"
-          }
+          { "desc": true, "displayName": "StartsAt" }
         ]
       },
       "targets": [
@@ -900,52 +911,35 @@
         }
       ],
       "title": "Silences",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "State": 0,
+              "Matchers": 1,
+              "Comment": 2,
+              "CreatedBy": 3,
+              "StartsAt": 4,
+              "EndsAt": 5,
+              "DurationMs": 6,
+              "ID": 7,
+              "Tags": 8,
+              "UpdatedAt": 9
+            },
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "table"
     }
   ],
   "refresh": "30s",
   "schemaVersion": 41,
-  "tags": ["alertmanager", "alerts", "silences", "annotations"],
+  "tags": ["alertmanager", "alerts", "silences", "annotations", "operations"],
   "templating": {
     "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "all",
-          "value": "all"
-        },
-        "hide": 0,
-        "includeAll": false,
-        "label": "Silence annotation state",
-        "multi": false,
-        "name": "silence_annotation_state",
-        "options": [
-          {
-            "selected": true,
-            "text": "all",
-            "value": "all"
-          },
-          {
-            "selected": false,
-            "text": "active",
-            "value": "active"
-          },
-          {
-            "selected": false,
-            "text": "pending",
-            "value": "pending"
-          },
-          {
-            "selected": false,
-            "text": "expired",
-            "value": "expired"
-          }
-        ],
-        "query": "all,active,pending,expired",
-        "queryValue": "",
-        "skipUrlSync": false,
-        "type": "custom"
-      },
       {
         "current": {
           "selected": false,
@@ -1002,6 +996,28 @@
         "query": "",
         "skipUrlSync": false,
         "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "all",
+          "value": "all"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Silence annotation state",
+        "multi": false,
+        "name": "silence_annotation_state",
+        "options": [
+          { "selected": true, "text": "all", "value": "all" },
+          { "selected": false, "text": "active", "value": "active" },
+          { "selected": false, "text": "pending", "value": "pending" },
+          { "selected": false, "text": "expired", "value": "expired" }
+        ],
+        "query": "all,active,pending,expired",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },

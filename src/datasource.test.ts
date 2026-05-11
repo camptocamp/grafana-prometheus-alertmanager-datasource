@@ -130,13 +130,13 @@ describe('AlertmanagerDataSource silences', () => {
     expect(events).toHaveLength(1);
     expect(events[0]).toMatchObject({
       isRegion: true,
-      title: 'Silence pending: db migration',
+      title: 'Silence (pending) — service="db" — db migration',
       tags: ['silence', 'state:pending', 'service:db'],
     });
     expect(events[0].time).toBe(Date.parse('2026-04-02T10:00:00Z'));
     expect(events[0].timeEnd).toBe(Date.parse('2026-04-02T11:00:00Z'));
     expect(events[0].text).toContain('db migration');
-    expect(events[0].text).toContain('Created by: bob');
+    expect(events[0].text).toContain('bob');
   });
 
   test('routes query by queryType and keeps alerts as default', async () => {

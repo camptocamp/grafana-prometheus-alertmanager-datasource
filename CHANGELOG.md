@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.3.1...v2.4.0) (2026-05-11)
+
+
+### Features
+
+* add alertmanager operations overview dashboard ([48d6418](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/48d641825622059223ad8c907a0293b90d27a169))
+* **annotations:** enrich silence annotations with matchers, duration and HTML tooltip ([0cf10ed](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/0cf10ed16b2ede288e8580b30acc3ac972e3173f))
+* **config:** migrate ConfigEditor to @grafana/plugin-ui components ([22ecfa5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/22ecfa516dc45e6269250f403800cc2b3ec8bad5))
+* **query-editor:** support silences mode in query editors ([638dd62](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/638dd62aefcb69bf96061720411881f97322bf88))
+* **silences:** implement queries and annotation events ([522baaf](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/522baaf88e7c5bb99438982c1b6a965f5046b56f))
+* **types:** extend query model with silence fields ([330cfd5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/330cfd59c29d1448f2cee98c1bde66804ea2edba))
+
+
+### Bug Fixes
+
+* **dashboard:** correct stat panel field selectors and restructure overview ([7a352a5](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/7a352a5af0fce6ea263dc5aaf675d01164a3ebf6))
+* **datasource:** replace MutableDataFrame with PartialDataFrame/DataFrame ([d74d016](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/d74d0161fbe87763fe5d9130d2f7c5b9293bb4fc))
+* **playwright:** remove trailing semicolon in config ([7d1c609](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/7d1c609db3b1320b3c11bc6199ea23b79b831d32))
+
+
+### Miscellaneous Changes
+
+* **deps:** add @grafana/plugin-ui and peer dependencies ([539b9c0](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/539b9c00440cda7c054497ced09503e7e99e9f44))
+* **deps:** bump all dependencies to latest versions ([6775276](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/6775276e80c7e91b6f46ab8d405ebfc751e86293))
+* **deps:** update yarn.lock with new dependency resolutions ([04402d1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/04402d1d067b20b6b8cfdc36ab840082f66a55d5))
+* **silences:** declare annotation support in plugin metadata ([914b89b](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/commit/914b89b3b94f5c12db951cfe8e3a56e3e81c47bf))
+
 ## [2.3.1](https://github.com/camptocamp/grafana-prometheus-alertmanager-datasource/compare/v2.3.0...v2.3.1) (2025-11-05)
 
 

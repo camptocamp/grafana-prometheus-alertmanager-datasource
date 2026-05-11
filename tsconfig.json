@@ -2,5 +2,14 @@
   "compilerOptions": {
     "jsx": "react"
   },
-  "extends": "./.config/tsconfig.json"
+  "extends": "./.config/tsconfig.json",
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "target": "es5",
+      "esModuleInterop": true
+    },
+    "transpileOnly": true
+  }
 }
